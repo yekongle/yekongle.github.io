@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>Yekongle</title>
+  
+  
+  <link href="/atom.xml" rel="self"/>
+  
+  <link href="https://yekongle.github.io/"/>
+  <updated>2019-01-20T16:16:53.127Z</updated>
+  <id>https://yekongle.github.io/</id>
+  
+  <author>
+    <name>Yekongle</name>
+    
+  </author>
+  
+  <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>PR视频字幕批量生成程序(用讯飞听见识别音频)</title>
+    <link href="https://yekongle.github.io/2017/11/23/auto-caption-procedure/"/>
+    <id>https://yekongle.github.io/2017/11/23/auto-caption-procedure/</id>
+    <published>2017-11-23T08:52:20.000Z</published>
+    <updated>2019-01-20T16:16:53.127Z</updated>
+    
+    <summary type="html">
+    
+      &lt;p&gt; 用过视频剪辑软件的小伙伴们可能都会为添加视频字幕所烦恼，尤其是当一个视频包含了大量语音而且只有你一个人在配字幕的时候,那就变得很蛋疼；尽管到最后你完成了这么庞大的工作量，但是你都会一度怀疑自己的人生。我曾经为一个十来分钟的视频配字幕都配到我想吐。&lt;br&gt;
+    
+    </summary>
+    
+      <category term="Interesting" scheme="https://yekongle.github.io/categories/Interesting/"/>
+    
+    
+      <category term="Clip" scheme="https://yekongle.github.io/tags/Clip/"/>
+    
+      <category term="Caption" scheme="https://yekongle.github.io/tags/Caption/"/>
+    
+      <category term="Java" scheme="https://yekongle.github.io/tags/Java/"/>
+    
+  </entry>
+  
+</feed>
