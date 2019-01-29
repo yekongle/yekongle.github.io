@@ -82,7 +82,7 @@
     <link href="https://yekongle.github.io/2019/01/22/cordova-quick-learn/"/>
     <id>https://yekongle.github.io/2019/01/22/cordova-quick-learn/</id>
     <published>2019-01-21T16:39:51.000Z</published>
-    <updated>2019-01-29T16:11:58.960Z</updated>
+    <updated>2019-01-29T16:21:35.653Z</updated>
     
     <summary type="html">
     
@@ -91,7 +91,7 @@
 &lt;li&gt;Web app: 一般是指 SAP(SinglePageApplication) 模式开发出的网站，体验较差。&lt;/li&gt;
 &lt;li&gt;React Native App: 是 Facebook 开源的一套App开发解决方案，让你只使用 JavaScript 也能够编写原生移动应用，它在设计原理上和 React 一致，通过声明式的组件机制来搭建丰富多彩的用户界面，能够实现大部分的跨平台，体验较好。&lt;/li&gt;
 &lt;li&gt;Hybrid App: 混合开发模式，由Native 通过 JSBridge(一种)等方法提供统一的API，然后用前端语言(HTML、JS、CSS) 来写实际的界面和逻辑，再调用API，最终应用的页面是在 webview中示，从而达到跨平台效果，常见的是用Phonegap或Cordova中间件组合其他移动UI框架进行开发。&lt;/li&gt;
-&lt;li&gt;值得注意的是，RN App 和 Hybrid App 还是有本质区别的，RN App 是用JavaScript告诉原生语言做什么，所以最终在平台上运行的都是原生语言，包括UI等，也是原生的组件，而 Hybrid App中显示的大多是 webview，webview 里套常见的移动UI框架。Hybird App的原理图如下：&lt;/li&gt;
+&lt;li&gt;值得注意的是，RN App 和 Hybrid App 还是有本质区别的，RN App 是用JavaScript告诉原生语言做什么，所以最终在平台上运行的都是原生语言，包括UI等，也是原生的组件，而 Hybrid App中显示的大多是 webview，webview 里套常见的移动UI框架。Hybird App的原理图如下W：&lt;/li&gt;
 &lt;/ul&gt;
     
     </summary>
