@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="https://yekongle.github.io/"/>
-  <updated>2019-01-29T16:11:48.160Z</updated>
+  <updated>2019-03-26T15:06:19.314Z</updated>
   <id>https://yekongle.github.io/</id>
   
   <author>
@@ -15,6 +15,32 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>Java常见设计模式</title>
+    <link href="https://yekongle.github.io/2019/03/19/common-design-patterns/"/>
+    <id>https://yekongle.github.io/2019/03/19/common-design-patterns/</id>
+    <published>2019-03-19T13:35:43.000Z</published>
+    <updated>2019-03-26T15:06:19.314Z</updated>
+    
+    <summary type="html">
+    
+      &lt;h3 id=&quot;前言&quot;&gt;&lt;a href=&quot;#前言&quot; class=&quot;headerlink&quot; title=&quot;前言&quot;&gt;&lt;/a&gt;前言&lt;/h3&gt;&lt;p&gt;设计模式的概念最早来源于建筑大师 Alexander 的《建筑的永恒方法一书》，书中的观点实际上也适用于软件设计领域。Alexander 是这样描述模式的：&lt;br&gt;&lt;strong&gt;模式是一条有三个部分组成的通用规则：它表示了一个特定环境、一类问题和一个解决方案之间的关系。每一个模式描述了一个不断重复发生的问题，以及该问题解决方案的核心设计。&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;软件设计模式通常被分成三类：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;创建型：创建对象时，不再直接实例化对象，而是根据特定场景，由程序来确定创建对象的方式，从而保证更高的性能、更好的架构优势。创建型模式主要有简单工厂模式、工厂方法、抽象工厂模式、单例模式、生成器模式和原型模式。&lt;/li&gt;
+&lt;li&gt;结构型：用于帮助将多个对象组织成更大的结构。结构型模式主要有适配器模式、桥接模式、组合器模式、装饰器模式、门面模式、享元模式和代理模式。&lt;/li&gt;
+&lt;li&gt;行为型：用于帮助系统间各对象的通信，以及如何控制复杂系统中的流程。行为型模式主要有命令模式、解释器模式、迭代器模式、中介者模式、备忘录模式、观察者模式、状态模式、策略模式、模板模式和访问模式。&lt;/li&gt;
+&lt;/ol&gt;
+    
+    </summary>
+    
+      <category term="Java" scheme="https://yekongle.github.io/categories/Java/"/>
+    
+    
+      <category term="Java" scheme="https://yekongle.github.io/tags/Java/"/>
+    
+  </entry>
   
   <entry>
     <title>Cordova开发篇</title>
