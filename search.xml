@@ -1,6 +1,53 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>PR视频字幕批量生成程序(用讯飞听见识别音频)</title>
+    <url>/2017/11/23/auto-caption-procedure/</url>
+    <content><![CDATA[<p> 用过视频剪辑软件的小伙伴们可能都会为添加视频字幕所烦恼，尤其是当一个视频包含了大量语音而且只有你一个人在配字幕的时候,那就变得很蛋疼；尽管到最后你完成了这么庞大的工作量，但是你都会一度怀疑自己的人生。我曾经为一个十来分钟的视频配字幕都配到我想吐。</p>
+<span id="more"></span>
+
+<p> 然后我最近看B站发现一个挺有意思的事情,就是利用讯飞语音识别服务可以识别语音并且自动生成文字，这就省掉了不少人力去听的功夫。众所周知科大讯飞的语音识别功能是蛮强的，看过老罗手机发布会视频的就能知道。知道了这个功能后，我就想到要做一个PR字幕自动生成工具,下面将讲解我是怎么一步步实现的。</p>
+<p>  <img data-src="http://wx4.sinaimg.cn/large/005GXpqPgy1fznubgrdgcj31go0o5gnb.jpg" alt="image"></p>
+<p>首先打开<a href="http://www.iflyrec.com/">讯飞听见</a>，遗憾的是，讯飞的这个语音识别功能是要收费的，看下价格，一种是机器快转（19.8元/小时），另一种是人机精转（80元/小时），看到这里，你是否心想：妖，都要收费的，我一个农村来的怎么负担得起。别急，我也是这样想的，继续往下看。点击上图的立即下单 </p>
+<p><img data-src="http://wx2.sinaimg.cn/large/005GXpqPgy1fznubhi7nfj31gf0qcach.jpg" alt="这里写图片描述"></p>
+<p>进入到这个页面，我们可以发现讯飞提供了一个体验的功能，就是你可以上传一段录音来体验一下他们家的这个语音识别功能，当然它是有限制的，你最多可以同时上传50条语音，每条语音不超过500M且不超过1分钟时长。所以说，这个功能对后期才配音的人员就比较友好。当然找个工具分割一下语音也是可以的，有空我再看看能不能写段代码实现语音分割。这里我上传了两条语音来试一下 </p>
+<p><img data-src="http://wx2.sinaimg.cn/large/005GXpqPgy1fznubhz9w6j31gk0odabf.jpg" alt="这里写图片描述"></p>
+<p><img data-src="http://wx4.sinaimg.cn/large/005GXpqPgy1fznubihbpxj31gw0h4wfb.jpg" alt="这里写图片描述"></p>
+<p>从上图可以看到它识别的准确度还是蛮高的。但如果你想要复制识别出来的文本是不行的，它已经做了限制了复制的功能。这里写了个js插件，可以一次性获取识别出的文本。</p>
+<p><img data-src="http://wx3.sinaimg.cn/large/005GXpqPgy1fznubj74hqj31g90aswf0.jpg" alt="这里写图片描述"></p>
+<p><img data-src="http://wx2.sinaimg.cn/large/005GXpqPgy1fznubjvbaoj31go0c7mxm.jpg" alt="这里写图片描述"></p>
+<p>在浏览器添加插件后刷新页面 ,可以发现红色箭头处多了个按钮，点击“获取数据”按钮就可以获得文本并显示在左边箭头所指的文本框里。右下角可以自由拉大缩小文本框</p>
+<p><img data-src="http://wx1.sinaimg.cn/large/005GXpqPgy1fznubkcwmjj31870hxmxw.jpg" alt="这里写图片描述"></p>
+<p>全选复制上图箭头所指文本框的内容，然后新建一个txt文件或者json文件，用记事本打开粘贴到里面,然后点击菜单文件的另存为,将编码ANSI改为UTF-8,保存。注意一定要更改编码，不然后面生成的字幕文件会出现乱码。</p>
+<p><img data-src="http://wx3.sinaimg.cn/large/005GXpqPgy1fznubku4h4j30ku00xjr9.jpg" alt="这里写图片描述"></p>
+<p><img data-src="http://wx4.sinaimg.cn/large/005GXpqPgy1fznublexorj30ou03v3yj.jpg" alt="这里写图片描述"></p>
+<p><img data-src="http://wx2.sinaimg.cn/large/005GXpqPgy1fznubm3s4kj30q40d70tb.jpg" alt="这里写图片描述"></p>
+<p>字幕文本保存好后，接下来就要生成一个字幕模板，这里使用的Premiere CC pro 2017软件。打开PR,先根据自己的喜好制作一个字幕样式当作字幕模板。接着选中字幕模板-&gt;文件-&gt;导出-&gt;标题,就可以生成一个字幕模板 </p>
+<p><img data-src="http://wx2.sinaimg.cn/large/005GXpqPgy1fznubmn3ydj31gl0qxgoa.jpg" alt="这里写图片描述"></p>
+<p><img data-src="http://wx1.sinaimg.cn/large/005GXpqPgy1fznubnb96uj31gd0q477m.jpg" alt="这里写图片描述"></p>
+<p>本来想分析一下整个序列的，但是不知什么原因PR导出Fianl cut pro xml总是提示有转换有问题，只好作罢。如果可以获得正确的序列的xml,就可以增改里面的代码，按时间线调整素材的顺序，再导入PR就可以自动排序好视频音频字幕的顺序 。(理论上是这样，但在我看到整个序列的xml之后，我有点怀疑我的想法，因为我感觉我在看天书。)</p>
+<p><img data-src="http://wx3.sinaimg.cn/large/005GXpqPgy1fznubnrrugj30ua04dq34.jpg" alt="这里写图片描述"></p>
+<p>这里我右击打开字幕文件，找到存放字幕文本的标签TRString,这样更改里面的文本就相当于换了一个字幕文件？如果你这样做PR是不能正确识别的。还有个地方需要注意的就是更改TRString下文本的同时也要注意这个文本的长度是多少，因为CharacterAttributes这个标签下的属RunCount就是记录文本字符的长度的。但就找到并了解它们就花了我大半天，晕~~。知道了这两个标签的作用后，就可以通过程序来修改它了。 </p>
+<p><img data-src="http://wx4.sinaimg.cn/large/005GXpqPgy1fznubor3h6j31gc0nzdp1.jpg" alt="这里写图片描述"></p>
+<p>OK,一切准备就绪，就是准备好了json格式的文本和字幕模板后，我们就可以通过java程序来整合他们并生成字幕了。这里我写了个java工具，可以完成这一平时操作起来非常耗时又费劲的工作。<br><img data-src="http://wx1.sinaimg.cn/large/005GXpqPgy1fznubpb4mpj30o60fi3zr.jpg" alt="这里写图片描述"></p>
+<p>用法也很简单，就是选择字幕模板，字幕文件和保存路径就可以批量生成字幕了，字幕文件将保存在一个名为Titles的目录里,这样方便整个目录拷贝到PR中。值得注意的是，目前仅支持PR CC版本的字幕文件。还有就是要运行它前提是要有<a href="http://jingyan.baidu.com/article/e75aca85b29c3b142edac6a8.html">java运行环境</a>。其它版本的PR，如cs,非常有空或者有兴致的时候再改下。</p>
+<p> <img data-src="http://wx1.sinaimg.cn/large/005GXpqPgy1fznubpxy0fj30na04j74f.jpg" alt="这里写图片描述"></p>
+<p><img data-src="http://wx1.sinaimg.cn/large/005GXpqPgy1fznubqer6fj31910f5wg0.jpg" alt="这里写图片描述"> </p>
+<p><img data-src="http://wx1.sinaimg.cn/large/005GXpqPgy1fznubqxflkj319f0cnmyh.jpg" alt="这里写图片描述"></p>
+<p>可以看到生成的字幕文件导入后能够正确识别,样式也和原来的模板保持一致；时间线也是按顺序来的,只要在前面导入语音识别时顺序没搞乱的话。事实上一般你在配音的时候无论用的是手机还是录音笔，都是会按照一定的顺序生成文件名的，所以一般已经不会搞乱，我的建议是都把录音都放在一个单独的文件夹里。</p>
+<p>至此就完成了字幕的批量生成，只需用到两个工具，一个是js插件，用来获取讯飞识别出来的文本,一个是 java工具,一步到位生成字幕到指定目录。<br>如果想直接用这两个工具的话,戳这里:<a href="http://pan.baidu.com/s/1slBIYCl"  target="_brank">密码：9o5n</a></p>
+<p>如果想分析源码的话,戳这里:<a href="http://pan.baidu.com/s/1slwPYjj" target="_brank">密码：hsgl</a></p>
+]]></content>
+      <categories>
+        <category>Interesting</category>
+      </categories>
+      <tags>
+        <tag>Clip</tag>
+        <tag>Caption</tag>
+        <tag>Java</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Java常见设计模式</title>
     <url>/2019/03/19/common-design-patterns/</url>
     <content><![CDATA[<h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>设计模式的概念最早来源于建筑大师 Alexander 的《建筑的永恒方法一书》，书中的观点实际上也适用于软件设计领域。Alexander 是这样描述模式的：<br><strong>模式是一条有三个部分组成的通用规则：它表示了一个特定环境、一类问题和一个解决方案之间的关系。每一个模式描述了一个不断重复发生的问题，以及该问题解决方案的核心设计。</strong></p>
@@ -138,253 +185,6 @@
       </tags>
   </entry>
   <entry>
-    <title>PR视频字幕批量生成程序(用讯飞听见识别音频)</title>
-    <url>/2017/11/23/auto-caption-procedure/</url>
-    <content><![CDATA[<p> 用过视频剪辑软件的小伙伴们可能都会为添加视频字幕所烦恼，尤其是当一个视频包含了大量语音而且只有你一个人在配字幕的时候,那就变得很蛋疼；尽管到最后你完成了这么庞大的工作量，但是你都会一度怀疑自己的人生。我曾经为一个十来分钟的视频配字幕都配到我想吐。</p>
-<span id="more"></span>
-
-<p> 然后我最近看B站发现一个挺有意思的事情,就是利用讯飞语音识别服务可以识别语音并且自动生成文字，这就省掉了不少人力去听的功夫。众所周知科大讯飞的语音识别功能是蛮强的，看过老罗手机发布会视频的就能知道。知道了这个功能后，我就想到要做一个PR字幕自动生成工具,下面将讲解我是怎么一步步实现的。</p>
-<p>  <img data-src="http://wx4.sinaimg.cn/large/005GXpqPgy1fznubgrdgcj31go0o5gnb.jpg" alt="image"></p>
-<p>首先打开<a href="http://www.iflyrec.com/">讯飞听见</a>，遗憾的是，讯飞的这个语音识别功能是要收费的，看下价格，一种是机器快转（19.8元/小时），另一种是人机精转（80元/小时），看到这里，你是否心想：妖，都要收费的，我一个农村来的怎么负担得起。别急，我也是这样想的，继续往下看。点击上图的立即下单 </p>
-<p><img data-src="http://wx2.sinaimg.cn/large/005GXpqPgy1fznubhi7nfj31gf0qcach.jpg" alt="这里写图片描述"></p>
-<p>进入到这个页面，我们可以发现讯飞提供了一个体验的功能，就是你可以上传一段录音来体验一下他们家的这个语音识别功能，当然它是有限制的，你最多可以同时上传50条语音，每条语音不超过500M且不超过1分钟时长。所以说，这个功能对后期才配音的人员就比较友好。当然找个工具分割一下语音也是可以的，有空我再看看能不能写段代码实现语音分割。这里我上传了两条语音来试一下 </p>
-<p><img data-src="http://wx2.sinaimg.cn/large/005GXpqPgy1fznubhz9w6j31gk0odabf.jpg" alt="这里写图片描述"></p>
-<p><img data-src="http://wx4.sinaimg.cn/large/005GXpqPgy1fznubihbpxj31gw0h4wfb.jpg" alt="这里写图片描述"></p>
-<p>从上图可以看到它识别的准确度还是蛮高的。但如果你想要复制识别出来的文本是不行的，它已经做了限制了复制的功能。这里写了个js插件，可以一次性获取识别出的文本。</p>
-<p><img data-src="http://wx3.sinaimg.cn/large/005GXpqPgy1fznubj74hqj31g90aswf0.jpg" alt="这里写图片描述"></p>
-<p><img data-src="http://wx2.sinaimg.cn/large/005GXpqPgy1fznubjvbaoj31go0c7mxm.jpg" alt="这里写图片描述"></p>
-<p>在浏览器添加插件后刷新页面 ,可以发现红色箭头处多了个按钮，点击“获取数据”按钮就可以获得文本并显示在左边箭头所指的文本框里。右下角可以自由拉大缩小文本框</p>
-<p><img data-src="http://wx1.sinaimg.cn/large/005GXpqPgy1fznubkcwmjj31870hxmxw.jpg" alt="这里写图片描述"></p>
-<p>全选复制上图箭头所指文本框的内容，然后新建一个txt文件或者json文件，用记事本打开粘贴到里面,然后点击菜单文件的另存为,将编码ANSI改为UTF-8,保存。注意一定要更改编码，不然后面生成的字幕文件会出现乱码。</p>
-<p><img data-src="http://wx3.sinaimg.cn/large/005GXpqPgy1fznubku4h4j30ku00xjr9.jpg" alt="这里写图片描述"></p>
-<p><img data-src="http://wx4.sinaimg.cn/large/005GXpqPgy1fznublexorj30ou03v3yj.jpg" alt="这里写图片描述"></p>
-<p><img data-src="http://wx2.sinaimg.cn/large/005GXpqPgy1fznubm3s4kj30q40d70tb.jpg" alt="这里写图片描述"></p>
-<p>字幕文本保存好后，接下来就要生成一个字幕模板，这里使用的Premiere CC pro 2017软件。打开PR,先根据自己的喜好制作一个字幕样式当作字幕模板。接着选中字幕模板-&gt;文件-&gt;导出-&gt;标题,就可以生成一个字幕模板 </p>
-<p><img data-src="http://wx2.sinaimg.cn/large/005GXpqPgy1fznubmn3ydj31gl0qxgoa.jpg" alt="这里写图片描述"></p>
-<p><img data-src="http://wx1.sinaimg.cn/large/005GXpqPgy1fznubnb96uj31gd0q477m.jpg" alt="这里写图片描述"></p>
-<p>本来想分析一下整个序列的，但是不知什么原因PR导出Fianl cut pro xml总是提示有转换有问题，只好作罢。如果可以获得正确的序列的xml,就可以增改里面的代码，按时间线调整素材的顺序，再导入PR就可以自动排序好视频音频字幕的顺序 。(理论上是这样，但在我看到整个序列的xml之后，我有点怀疑我的想法，因为我感觉我在看天书。)</p>
-<p><img data-src="http://wx3.sinaimg.cn/large/005GXpqPgy1fznubnrrugj30ua04dq34.jpg" alt="这里写图片描述"></p>
-<p>这里我右击打开字幕文件，找到存放字幕文本的标签TRString,这样更改里面的文本就相当于换了一个字幕文件？如果你这样做PR是不能正确识别的。还有个地方需要注意的就是更改TRString下文本的同时也要注意这个文本的长度是多少，因为CharacterAttributes这个标签下的属RunCount就是记录文本字符的长度的。但就找到并了解它们就花了我大半天，晕~~。知道了这两个标签的作用后，就可以通过程序来修改它了。 </p>
-<p><img data-src="http://wx4.sinaimg.cn/large/005GXpqPgy1fznubor3h6j31gc0nzdp1.jpg" alt="这里写图片描述"></p>
-<p>OK,一切准备就绪，就是准备好了json格式的文本和字幕模板后，我们就可以通过java程序来整合他们并生成字幕了。这里我写了个java工具，可以完成这一平时操作起来非常耗时又费劲的工作。<br><img data-src="http://wx1.sinaimg.cn/large/005GXpqPgy1fznubpb4mpj30o60fi3zr.jpg" alt="这里写图片描述"></p>
-<p>用法也很简单，就是选择字幕模板，字幕文件和保存路径就可以批量生成字幕了，字幕文件将保存在一个名为Titles的目录里,这样方便整个目录拷贝到PR中。值得注意的是，目前仅支持PR CC版本的字幕文件。还有就是要运行它前提是要有<a href="http://jingyan.baidu.com/article/e75aca85b29c3b142edac6a8.html">java运行环境</a>。其它版本的PR，如cs,非常有空或者有兴致的时候再改下。</p>
-<p> <img data-src="http://wx1.sinaimg.cn/large/005GXpqPgy1fznubpxy0fj30na04j74f.jpg" alt="这里写图片描述"></p>
-<p><img data-src="http://wx1.sinaimg.cn/large/005GXpqPgy1fznubqer6fj31910f5wg0.jpg" alt="这里写图片描述"> </p>
-<p><img data-src="http://wx1.sinaimg.cn/large/005GXpqPgy1fznubqxflkj319f0cnmyh.jpg" alt="这里写图片描述"></p>
-<p>可以看到生成的字幕文件导入后能够正确识别,样式也和原来的模板保持一致；时间线也是按顺序来的,只要在前面导入语音识别时顺序没搞乱的话。事实上一般你在配音的时候无论用的是手机还是录音笔，都是会按照一定的顺序生成文件名的，所以一般已经不会搞乱，我的建议是都把录音都放在一个单独的文件夹里。</p>
-<p>至此就完成了字幕的批量生成，只需用到两个工具，一个是js插件，用来获取讯飞识别出来的文本,一个是 java工具,一步到位生成字幕到指定目录。<br>如果想直接用这两个工具的话,戳这里:<a href="http://pan.baidu.com/s/1slBIYCl"  target="_brank">密码：9o5n</a></p>
-<p>如果想分析源码的话,戳这里:<a href="http://pan.baidu.com/s/1slwPYjj" target="_brank">密码：hsgl</a></p>
-]]></content>
-      <categories>
-        <category>Interesting</category>
-      </categories>
-      <tags>
-        <tag>Java</tag>
-        <tag>Clip</tag>
-        <tag>Caption</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Cordova快速入门</title>
-    <url>/2019/01/22/cordova-quick-learn/</url>
-    <content><![CDATA[<h3 id="背景介绍"><a href="#背景介绍" class="headerlink" title="背景介绍"></a>背景介绍</h3><h4 id="数说移动端的几种开发模式"><a href="#数说移动端的几种开发模式" class="headerlink" title="数说移动端的几种开发模式"></a>数说移动端的几种开发模式</h4><ul>
-<li>Native App: 采用原生代码进行，优点就是体验好，缺点是需要为不同的系统平台独立开发一套应用，开发成本较高。</li>
-<li>Web app: 一般是指 SAP(SinglePageApplication) 模式开发出的网站，体验较差。</li>
-<li> React Native App: 是 Facebook 开源的一套App开发解决方案，让你只使用 JavaScript 也能够编写原生移动应用，它在设计原理上和 React 一致，通过声明式的组件机制来搭建丰富多彩的用户界面，能够实现大部分的跨平台，体验较好。</li>
-<li>Hybrid App: 混合开发模式，由Native 通过 JSBridge(一种)等方法提供统一的API，然后用前端语言(HTML、JS、CSS) 来写实际的界面和逻辑，再调用API，最终应用的页面是在 webview中示，从而达到跨平台效果，常见的是用Phonegap或Cordova中间件组合其他移动UI框架进行开发。</li>
-<li>值得注意的是，RN App 和 Hybrid App 还是有本质区别的，RN App 是用JavaScript告诉原生语言做什么，所以最终在平台上运行的都是原生语言，包括UI等，也是原生的组件，而 Hybrid App中显示的大多是 webview，webview 里套常见的移动UI框架。Hybird App的原理图如下W：</li>
-</ul>
-<span id="more"></span>
-
-<p><img data-src="http://wx2.sinaimg.cn/large/005GXpqPgy1fznuqhlz3vj30cc0fa74e.jpg" alt="image"></p>
-<h4 id="Cordova的前世今生"><a href="#Cordova的前世今生" class="headerlink" title="Cordova的前世今生"></a>Cordova的前世今生</h4><p>Cordova前身是 Phonegap，最先由 Nitobi 软件公司在2008年推出，旨在弥补 web 和 ios 之间的不足，使得 web 和 iphone SDK 之间的交互更容易，后来陆续加入了更多的平台。</p>
-<p>2011年，Adobe公司收购 Nitobi 后，将phonegap 项目的核心代码捐赠给了 Apache软件基金会(ASF), 使其保持透明和持续的发展，Apchae将其命名为 Cordova，而Adobe PhoneGap则发展出了一些服务型工具，如 Phonegap destop App、 Phonegap developer App、Phonegap build、Phonegap CLI等。</p>
-<p>很多人可能会问：那 Cordova 和 Phonegap 的区别到底是什么，其实Cordova相当于驱动 Phonegap 的核心引擎，就好比如 WebKit 是现在大多数浏览器的引擎一样，因此 Adobe PhoneGap可理解为是Apache Cordova 的应用发行版。</p>
-<p>Cordova的架构原理图如下，可知 Cordova 是混合App开发的一个中间件。</p>
-<p><img data-src="http://wx1.sinaimg.cn/large/005GXpqPgy1fznuqi2d0oj30nf0ijgmp.jpg" alt="image"></p>
-<h3 id="Cordova安装"><a href="#Cordova安装" class="headerlink" title="Cordova安装"></a>Cordova安装</h3><p>安装 Cordova 前，需要准备两样东西。</p>
-<ol>
-<li>下载安装 Node.js，这样就可以使用 Node.js 的 npm 软件管理包。</li>
-<li>安装 Git，因为当涉及到一些 git 仓库时会使用 git 来下载相关的资源。</li>
-</ol>
-<p>Mac Os 或 Linux平台：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo npm install -g cordova</span><br></pre></td></tr></table></figure>
-<p>Windows：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">C:\&gt;npm install -g cordova</span><br></pre></td></tr></table></figure>
-<p>-g 参数是指告诉 npm 要全局安装 Cordova，不然会被安装在当前目录的子目录 node_modules 下。</p>
-<h3 id="Cordova使用"><a href="#Cordova使用" class="headerlink" title="Cordova使用"></a>Cordova使用</h3><h4 id="创建一个-App-项目"><a href="#创建一个-App-项目" class="headerlink" title="创建一个 App 项目"></a>创建一个 App 项目</h4><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">cordova create hello[Required] com.example.hello[Optional] HelloWorld[Optional]</span><br></pre></td></tr></table></figure>
-<p>hello 是指项目文件夹名，com.example.hello 是应用程序的 ID 名，可在 config.xml 中更改。 HelloWorld，是 App 的名称，也可在 config.xml 中更改<br>这样就会创建最基本的App目录结构，默认会生成基于的web的应用主页，即为项目目录下的 www/index.html</p>
-<h4 id="目录结构"><a href="#目录结构" class="headerlink" title="目录结构"></a>目录结构</h4><p>Cordova 默认创建的 App 目录如下：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">myapp/</span><br><span class="line">|-- config.xml</span><br><span class="line">|-- hooks/</span><br><span class="line">|-- merges/</span><br><span class="line">| | |-- android/</span><br><span class="line">| | |-- windows/</span><br><span class="line">| | |-- ios/</span><br><span class="line">|-- www/</span><br><span class="line">|-- platforms/</span><br><span class="line">| |-- android/</span><br><span class="line">| |-- windows/</span><br><span class="line">| |-- ios/</span><br><span class="line">|-- plugins/</span><br><span class="line">  |--cordova-plugin-camera/</span><br></pre></td></tr></table></figure>
-<ul>
-<li>config.xml: 在这你可以自定义 App 项目的信息</li>
-<li>www/: 包括项目的web代码，如 html, css 和 js 文件，你将在这开发你 App 的主要代码，另外在 plaform 目录下的ios 目录或 android 目录下，也会有一个 www 目录，是基于 project/www 目录编译覆盖的。</li>
-<li>platform/: 包括你添加的平台的源码和脚本，注意一般不要该目录下的代码，否则可能造成在相关平台运行不了。</li>
-<li>plugins/: 插件目录，所有添加的插件都会被解压并复制到该目录下。</li>
-<li>hooks/：可以包含用于自定义 Cordova-CLI 命令的脚本， 您添加到这些目录的任何脚本都将在与目录名对应的命令之前和之后执行。 用于集成您自己的构建系统或与版本控制系统。</li>
-<li>merges/: 包含一些与特定平台相关联的 web 资源(HTML, CSS 和 JavaScript 文件),放在merges /下的文件将覆盖相关平台的www /文件夹中的匹配文件。 一个简单的例子，假设一个项目结构：</li>
-</ul>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">merges/</span><br><span class="line">|-- ios/</span><br><span class="line">| -- app.js</span><br><span class="line">|-- android/</span><br><span class="line">| -- android.js</span><br><span class="line">www/</span><br><span class="line">-- app.js</span><br></pre></td></tr></table></figure>
-<p>在构建Android和iOS项目之后，Android应用程序将同时包含app.js和android.js，而iOS应用程序则只包含app.js，它是将 merges/ios/app.js，覆盖位于www/内的通用的app.js。</p>
-<h4 id="添加平台"><a href="#添加平台" class="headerlink" title="添加平台"></a>添加平台</h4><p>首先进入项目目录:</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> hello</span><br></pre></td></tr></table></figure>
-<p>添加开发平台，会在 config.xml 和 package.json 中有记录:</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ cordova platform add ios</span><br><span class="line">$ cordova platform add android</span><br></pre></td></tr></table></figure>
-<p>执行上面两条命令后会在 platform 目录下生成 ios 和 android 两个子目录，用来存放编译后的代码和一些app的内容。</p>
-<p>查看项目已添加的平台：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ cordova platform <span class="built_in">ls</span></span><br></pre></td></tr></table></figure>
-<p>当在 www 目录下开发完毕后，用以下命令构建项目到各个平台：</p>
-<h4 id="构建前准备"><a href="#构建前准备" class="headerlink" title="构建前准备"></a>构建前准备</h4><p>要构建和运行应用程序，您需要为您想要开发的每个平台安装对应的SDK。 或者，如果您使用浏览器进行开发，则可以使用不需要任何平台SDK的浏览器平台。</p>
-<p>查看您是否满足必须条件：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ cordova requirements</span><br><span class="line">Requirements check results <span class="keyword">for</span> android:</span><br><span class="line">Java JDK: installed .</span><br><span class="line">Android SDK: installed</span><br><span class="line">Android target: installed android-19,android-21,android-22,android-23,Google Inc.:Google APIs:19,Google Inc.:Google APIs (x86 System Image):19,Google Inc.:Google APIs:23</span><br><span class="line">Gradle: installed</span><br><span class="line"></span><br><span class="line">Requirements check results <span class="keyword">for</span> ios:</span><br><span class="line">Apple OS X: not installed</span><br><span class="line">Cordova tooling <span class="keyword">for</span> iOS requires Apple OS X</span><br><span class="line">Error: Some of requirements check failed</span><br></pre></td></tr></table></figure>
-
-
-<h4 id="应用构建与运行"><a href="#应用构建与运行" class="headerlink" title="应用构建与运行"></a>应用构建与运行</h4><h5 id="构建应用"><a href="#构建应用" class="headerlink" title="构建应用"></a>构建应用</h5><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">cordova build [&lt;platform&gt; [...]]</span><br><span class="line">    [--debug|--release]</span><br><span class="line">    [--device|--emulator]</span><br><span class="line">    [--buildConfig=&lt;configfile&gt;]</span><br><span class="line">    [--browserify]</span><br><span class="line">    [-- &lt;platformOpts&gt;]</span><br></pre></td></tr></table></figure>
-
-<table>
-<thead>
-<tr>
-<th>参数</th>
-<th>说明</th>
-</tr>
-</thead>
-<tbody><tr>
-<td><platform>[…]</td>
-<td>要构建的平台名，没指定则为所有平台进行编译构建</td>
-</tr>
-<tr>
-<td>–debug</td>
-<td>构建调试模式</td>
-</tr>
-<tr>
-<td>–release</td>
-<td>构建发布模式</td>
-</tr>
-<tr>
-<td>–device</td>
-<td>构建到设备</td>
-</tr>
-<tr>
-<td>–emulator</td>
-<td>构建到模拟器</td>
-</tr>
-<tr>
-<td>–buildConfig=<configFile></td>
-<td>使用特定的配置文件来编译构建，如指定签名等。</td>
-</tr>
-<tr>
-<td>–browserity</td>
-<td>在构建时编译JS插件而不是运行时</td>
-</tr>
-<tr>
-<td><platformOpts></td>
-<td>提供特定的选项</td>
-</tr>
-</tbody></table>
-<h5 id="运行应用"><a href="#运行应用" class="headerlink" title="运行应用"></a>运行应用</h5><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">cordova run [&lt;platform&gt; [...]]</span><br><span class="line">    [--list | --debug | --release]</span><br><span class="line">    [--noprepare] [--nobuild]</span><br><span class="line">    [--device|--emulator|--target=&lt;targetName&gt;]</span><br><span class="line">    [--buildConfig=&lt;configfile&gt;]</span><br><span class="line">    [--browserify]</span><br><span class="line">    [-- &lt;platformOpts&gt;]</span><br></pre></td></tr></table></figure>
-
-
-<table>
-<thead>
-<tr>
-<th>参数</th>
-<th>说明</th>
-</tr>
-</thead>
-<tbody><tr>
-<td><platform>[…]</td>
-<td>要运行的平台名，没指定则所有平台都运行</td>
-</tr>
-<tr>
-<td>–list</td>
-<td>列出可用的运行目标，包括模拟器和设备，除非特定指定</td>
-</tr>
-<tr>
-<td>–debug</td>
-<td>默认选型，运行调试模式</td>
-</tr>
-<tr>
-<td>–release</td>
-<td>运行发布模式</td>
-</tr>
-<tr>
-<td>–noprepare</td>
-<td>跳过准备阶段，适用于Cordova v6.2及其之后版本。</td>
-</tr>
-<tr>
-<td>–nobuild</td>
-<td>跳过重新构建阶段</td>
-</tr>
-<tr>
-<td>–device</td>
-<td>在设备上运行</td>
-</tr>
-<tr>
-<td>–emulator</td>
-<td>在模拟器上运行</td>
-</tr>
-<tr>
-<td>–target</td>
-<td>指定运行目标</td>
-</tr>
-<tr>
-<td>–buildConfig=<configFile></td>
-<td>使用特定的配置文件来编译构建，如指定签名等。</td>
-</tr>
-<tr>
-<td>–browserity</td>
-<td>在构建时编译JS插件而不是在运行时</td>
-</tr>
-<tr>
-<td><platformOpts></td>
-<td>提供特定的选项</td>
-</tr>
-</tbody></table>
-<h4 id="添加插件"><a href="#添加插件" class="headerlink" title="添加插件"></a>添加插件</h4><p>可以在 <a href="https://cordova.apache.org/plugins/">Cordova插件资源</a> 页面中查询需要的插件，也可以使用命令行搜索相关插件：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ cordova plugin search camera</span><br></pre></td></tr></table></figure>
-
-<p>添加某个插件：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ cordova plugin add cordova-plugin-camera</span><br><span class="line">Fetching plugin <span class="string">&quot;cordova-plugin-camera@~2.1.0&quot;</span> via npm</span><br><span class="line">Installing <span class="string">&quot;cordova-plugin-camera&quot;</span> <span class="keyword">for</span> android</span><br><span class="line">Installing <span class="string">&quot;cordova-plugin-camera&quot;</span> <span class="keyword">for</span> ios</span><br></pre></td></tr></table></figure>
-<p>插件也可以通过目录或 Git 仓库的形式添加</p>
-<p>注意：（CLI为每个平台添加适当的插件代码。 如果您希望使用概述中讨论的低级shell工具或平台SDK进行开发，则需要运行Plugman实用程序以为每个平台单独添加插件。 （有关更多信息，请参阅使用Plugman管理插件。）</p>
-<p>查看已安装的插件</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ cordova plugin <span class="built_in">ls</span></span><br><span class="line">cordova-plugin-camera 2.1.0 <span class="string">&quot;Camera&quot;</span></span><br><span class="line">cordova-plugin-whitelist 1.2.1 <span class="string">&quot;Whitelist&quot;</span></span><br></pre></td></tr></table></figure>
-
-<h4 id="使用合并功能"><a href="#使用合并功能" class="headerlink" title="使用合并功能"></a>使用合并功能</h4><p>虽然Cordova允许您能够轻松地为许多不同平台部署应用程序，但实际上您时常需要添加一些自定义项。在这种情况下，您当然不希望修改不同平台下的www目录中的源文件，因为它们经常被顶级www目录的资源替换。</p>
-<p>因此，Cordova 在顶级目录下提供了一个位置(merge目录)可以指定在哪个平台部署资源。merge目录中的平台子目录都对应着 www源码目录机构，允许您根据需要覆盖或添加文件。例如，你可能会使用合并功能为 Android 设备设置默认的字体大小：</p>
-<ul>
-<li>在 www/index.html 文件中，添加一条指向额外的CSS样式文件的链接：overrides.css</li>
-</ul>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">&lt;<span class="built_in">link</span> rel=<span class="string">&quot;stylesheet&quot;</span> <span class="built_in">type</span>=<span class="string">&quot;text/css&quot;</span> href=<span class="string">&quot;css/overrides.css&quot;</span> /&gt;</span><br></pre></td></tr></table></figure>
-<ul>
-<li>（可选）创建一个空的www / css / overrides.css文件，该文件适用于所有非Android版本，防止丢失文件错误。</li>
-<li>在merges / android中创建一个css子目录，然后添加一个相应的overrides.css文件。 指定覆盖www / css / index.css中指定的12磅默认字体大小的CSS，例如：</li>
-</ul>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">body &#123; font-size:14px; &#125;</span><br></pre></td></tr></table></figure>
-<p>当你重新构建项目后，只有 android 平台会应用自定义字体大小的样式，而其他平台保持不变。</p>
-<h4 id="更新-Cordova-和您的项目"><a href="#更新-Cordova-和您的项目" class="headerlink" title="更新 Cordova 和您的项目"></a>更新 Cordova 和您的项目</h4><p>升级 Cordova 版本:</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ sudo npm update -g cordova</span><br></pre></td></tr></table></figure>
-<p>安装指定的 Cordova 版本：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ sudo npm install -g cordova@3.1.0-0.2.0</span><br></pre></td></tr></table></figure>
-<p>查看 Cordova 版本：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">cordova -v</span><br></pre></td></tr></table></figure>
-<p>查看最新 Cordova 最新版本相关信息：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ npm info cordova version</span><br></pre></td></tr></table></figure>
-
-<p>更新指定的平台：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ cordova platform update android --save</span><br><span class="line">$ cordova platform update ios --save</span><br><span class="line">...etc.</span><br></pre></td></tr></table></figure>
-
-
-
-]]></content>
-      <categories>
-        <category>mobile</category>
-      </categories>
-      <tags>
-        <tag>Cordova</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Cordova开发篇</title>
     <url>/2019/01/29/cordova-dev-learn/</url>
     <content><![CDATA[<h3 id="Android-平台"><a href="#Android-平台" class="headerlink" title="Android 平台"></a>Android 平台</h3><p>支持的Android API级别和过去几个cordova-android版本的Android版本：</p>
@@ -467,7 +267,7 @@
 <h4 id="项目配置"><a href="#项目配置" class="headerlink" title="项目配置"></a>项目配置</h4><h5 id="模拟器配置："><a href="#模拟器配置：" class="headerlink" title="模拟器配置："></a>模拟器配置：</h5><p>如果您希望你的Cordova App 运行在安卓模拟器上，您首先需要创建一个安卓虚拟机(AVD), 通常可以在 Android Studio 上快速创建和配置。AVD 创建完后，便可以通过 Cordova 命令运行App在模拟器上：</p>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ cordova run --emulator</span><br></pre></td></tr></table></figure>
 
-<h5 id="Gradle-配置："><a href="#Gradle-配置：" class="headerlink" title="Gradle 配置："></a>Gradle 配置：</h5><p>对于<a href="mailto:&#99;&#111;&#x72;&#100;&#111;&#118;&#97;&#x2d;&#x61;&#110;&#100;&#x72;&#111;&#105;&#100;&#64;&#x34;&#46;&#48;&#x2e;&#48;">&#99;&#111;&#x72;&#100;&#111;&#118;&#97;&#x2d;&#x61;&#110;&#100;&#x72;&#111;&#105;&#100;&#64;&#x34;&#46;&#48;&#x2e;&#48;</a> 以上，Cordova的安卓项目是使用Gradle构建的。 有关使用Ant构建的说明，请参阅文档的旧版本，注意，从Android SDK Tools 25.3.0开始，就已经不推荐使用Ant版本。</p>
+<h5 id="Gradle-配置："><a href="#Gradle-配置：" class="headerlink" title="Gradle 配置："></a>Gradle 配置：</h5><p>对于<a href="mailto:&#99;&#111;&#x72;&#x64;&#x6f;&#118;&#97;&#x2d;&#x61;&#x6e;&#x64;&#x72;&#x6f;&#105;&#100;&#x40;&#52;&#x2e;&#x30;&#x2e;&#x30;">&#99;&#111;&#x72;&#x64;&#x6f;&#118;&#97;&#x2d;&#x61;&#x6e;&#x64;&#x72;&#x6f;&#105;&#100;&#x40;&#52;&#x2e;&#x30;&#x2e;&#x30;</a> 以上，Cordova的安卓项目是使用Gradle构建的。 有关使用Ant构建的说明，请参阅文档的旧版本，注意，从Android SDK Tools 25.3.0开始，就已经不推荐使用Ant版本。</p>
 <p>Gradle属性配置：</p>
 <p>可以通过设置 Cordova 公开的一些属性来配置 Gradle，以下是关于这些属性的说明：</p>
 <table>
@@ -809,37 +609,203 @@
       </tags>
   </entry>
   <entry>
-    <title>Hexo更换电脑如何同步博客配置解决办法</title>
-    <url>/2020/03/28/hexo-online/</url>
-    <content><![CDATA[<h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>关于使用 Hexo 搭建个人博客可参考本人另一篇博文: <a href="https://blog.csdn.net/qq_23483671/article/details/78635372">Hexo框架+NextT主题搭建博客教程</a></p>
-<p>相信有不少小伙伴使用 Hexo 来搭建自己的个人博客，但问题是如果你电脑突然坏了，或者你想在其他电脑编辑发表你的博客，又要花费时间精力来重新配置你的站点，这样就比较麻烦。这时，我们可以将我们的站点放到 Github 或者其他 Git 托管平台，如此一来，无论你在哪里，都可以随时 clone 下来，简单配置下，就可以继续玩耍。</p>
+    <title>Cordova快速入门</title>
+    <url>/2019/01/22/cordova-quick-learn/</url>
+    <content><![CDATA[<h3 id="背景介绍"><a href="#背景介绍" class="headerlink" title="背景介绍"></a>背景介绍</h3><h4 id="数说移动端的几种开发模式"><a href="#数说移动端的几种开发模式" class="headerlink" title="数说移动端的几种开发模式"></a>数说移动端的几种开发模式</h4><ul>
+<li>Native App: 采用原生代码进行，优点就是体验好，缺点是需要为不同的系统平台独立开发一套应用，开发成本较高。</li>
+<li>Web app: 一般是指 SAP(SinglePageApplication) 模式开发出的网站，体验较差。</li>
+<li> React Native App: 是 Facebook 开源的一套App开发解决方案，让你只使用 JavaScript 也能够编写原生移动应用，它在设计原理上和 React 一致，通过声明式的组件机制来搭建丰富多彩的用户界面，能够实现大部分的跨平台，体验较好。</li>
+<li>Hybrid App: 混合开发模式，由Native 通过 JSBridge(一种)等方法提供统一的API，然后用前端语言(HTML、JS、CSS) 来写实际的界面和逻辑，再调用API，最终应用的页面是在 webview中示，从而达到跨平台效果，常见的是用Phonegap或Cordova中间件组合其他移动UI框架进行开发。</li>
+<li>值得注意的是，RN App 和 Hybrid App 还是有本质区别的，RN App 是用JavaScript告诉原生语言做什么，所以最终在平台上运行的都是原生语言，包括UI等，也是原生的组件，而 Hybrid App中显示的大多是 webview，webview 里套常见的移动UI框架。Hybird App的原理图如下W：</li>
+</ul>
 <span id="more"></span>
 
-<h3 id="实践"><a href="#实践" class="headerlink" title="实践"></a>实践</h3><h4 id="准备新仓库或新分支"><a href="#准备新仓库或新分支" class="headerlink" title="准备新仓库或新分支"></a>准备新仓库或新分支</h4><p>首先，你可以在 Github 创建一个新仓库或者直接在自己的 Gihubpage 仓库创建一条新 branch 来存放你的 hexo 相关配置文件。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 本地创建新分支 hexo 并切换到该分支</span></span><br><span class="line">git checkout -b hexo</span><br><span class="line"><span class="comment"># 推送分支并merge到远程分支hexo, 没有会自动创建</span></span><br><span class="line">git push origin hexo:hexo</span><br></pre></td></tr></table></figure>
-<p><strong>或者用 eclipse 管理仓库，创建新分支</strong><br><img data-src="https://wx4.sinaimg.cn/mw690/005GXpqPgy1gd9psy57o5j30gv0bf74p.jpg" alt="image"></p>
-<p><strong>推送分支到远程</strong><br><img data-src="https://wx1.sinaimg.cn/mw690/005GXpqPgy1gd9pt9yif0j30iu0ghjs7.jpg" alt="image"></p>
-<h4 id="删掉分支-hexo-下面除了-git-的内容"><a href="#删掉分支-hexo-下面除了-git-的内容" class="headerlink" title="删掉分支 hexo 下面除了 git 的内容"></a>删掉分支 hexo 下面除了 git 的内容</h4><p><img data-src="https://wx3.sinaimg.cn/mw690/005GXpqPgy1gd9ptqwgf8j30ld0e0ab4.jpg" alt="image"></p>
-<h4 id="将现有的-hexo-目录拷贝到该分支目录下"><a href="#将现有的-hexo-目录拷贝到该分支目录下" class="headerlink" title="将现有的 hexo 目录拷贝到该分支目录下"></a>将现有的 hexo 目录拷贝到该分支目录下</h4><p>要拷贝的文件或目录有：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">_config.yml</span><br><span class="line">package.json</span><br><span class="line">scaffolds/</span><br><span class="line"><span class="built_in">source</span>/</span><br><span class="line">themes/</span><br><span class="line">.gitignore</span><br></pre></td></tr></table></figure>
-<p>.gitignore 里的内容如下：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">.DS_Store</span><br><span class="line">Thumbs.db</span><br><span class="line">db.json</span><br><span class="line">*.<span class="built_in">log</span></span><br><span class="line">node_modules/</span><br><span class="line">public/</span><br><span class="line">.deploy*/</span><br></pre></td></tr></table></figure>
-<p><img data-src="https://wx3.sinaimg.cn/mw690/005GXpqPgy1gd9ptuwmgoj30l405vq35.jpg" alt="image"></p>
-<h4 id="推送到远程分支"><a href="#推送到远程分支" class="headerlink" title="推送到远程分支"></a>推送到远程分支</h4><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git add .</span><br><span class="line">git commit -m <span class="string">&quot;Add hexo&quot;</span></span><br><span class="line">git push</span><br></pre></td></tr></table></figure>
+<p><img data-src="http://wx2.sinaimg.cn/large/005GXpqPgy1fznuqhlz3vj30cc0fa74e.jpg" alt="image"></p>
+<h4 id="Cordova的前世今生"><a href="#Cordova的前世今生" class="headerlink" title="Cordova的前世今生"></a>Cordova的前世今生</h4><p>Cordova前身是 Phonegap，最先由 Nitobi 软件公司在2008年推出，旨在弥补 web 和 ios 之间的不足，使得 web 和 iphone SDK 之间的交互更容易，后来陆续加入了更多的平台。</p>
+<p>2011年，Adobe公司收购 Nitobi 后，将phonegap 项目的核心代码捐赠给了 Apache软件基金会(ASF), 使其保持透明和持续的发展，Apchae将其命名为 Cordova，而Adobe PhoneGap则发展出了一些服务型工具，如 Phonegap destop App、 Phonegap developer App、Phonegap build、Phonegap CLI等。</p>
+<p>很多人可能会问：那 Cordova 和 Phonegap 的区别到底是什么，其实Cordova相当于驱动 Phonegap 的核心引擎，就好比如 WebKit 是现在大多数浏览器的引擎一样，因此 Adobe PhoneGap可理解为是Apache Cordova 的应用发行版。</p>
+<p>Cordova的架构原理图如下，可知 Cordova 是混合App开发的一个中间件。</p>
+<p><img data-src="http://wx1.sinaimg.cn/large/005GXpqPgy1fznuqi2d0oj30nf0ijgmp.jpg" alt="image"></p>
+<h3 id="Cordova安装"><a href="#Cordova安装" class="headerlink" title="Cordova安装"></a>Cordova安装</h3><p>安装 Cordova 前，需要准备两样东西。</p>
+<ol>
+<li>下载安装 Node.js，这样就可以使用 Node.js 的 npm 软件管理包。</li>
+<li>安装 Git，因为当涉及到一些 git 仓库时会使用 git 来下载相关的资源。</li>
+</ol>
+<p>Mac Os 或 Linux平台：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo npm install -g cordova</span><br></pre></td></tr></table></figure>
+<p>Windows：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">C:\&gt;npm install -g cordova</span><br></pre></td></tr></table></figure>
+<p>-g 参数是指告诉 npm 要全局安装 Cordova，不然会被安装在当前目录的子目录 node_modules 下。</p>
+<h3 id="Cordova使用"><a href="#Cordova使用" class="headerlink" title="Cordova使用"></a>Cordova使用</h3><h4 id="创建一个-App-项目"><a href="#创建一个-App-项目" class="headerlink" title="创建一个 App 项目"></a>创建一个 App 项目</h4><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">cordova create hello[Required] com.example.hello[Optional] HelloWorld[Optional]</span><br></pre></td></tr></table></figure>
+<p>hello 是指项目文件夹名，com.example.hello 是应用程序的 ID 名，可在 config.xml 中更改。 HelloWorld，是 App 的名称，也可在 config.xml 中更改<br>这样就会创建最基本的App目录结构，默认会生成基于的web的应用主页，即为项目目录下的 www/index.html</p>
+<h4 id="目录结构"><a href="#目录结构" class="headerlink" title="目录结构"></a>目录结构</h4><p>Cordova 默认创建的 App 目录如下：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">myapp/</span><br><span class="line">|-- config.xml</span><br><span class="line">|-- hooks/</span><br><span class="line">|-- merges/</span><br><span class="line">| | |-- android/</span><br><span class="line">| | |-- windows/</span><br><span class="line">| | |-- ios/</span><br><span class="line">|-- www/</span><br><span class="line">|-- platforms/</span><br><span class="line">| |-- android/</span><br><span class="line">| |-- windows/</span><br><span class="line">| |-- ios/</span><br><span class="line">|-- plugins/</span><br><span class="line">  |--cordova-plugin-camera/</span><br></pre></td></tr></table></figure>
+<ul>
+<li>config.xml: 在这你可以自定义 App 项目的信息</li>
+<li>www/: 包括项目的web代码，如 html, css 和 js 文件，你将在这开发你 App 的主要代码，另外在 plaform 目录下的ios 目录或 android 目录下，也会有一个 www 目录，是基于 project/www 目录编译覆盖的。</li>
+<li>platform/: 包括你添加的平台的源码和脚本，注意一般不要该目录下的代码，否则可能造成在相关平台运行不了。</li>
+<li>plugins/: 插件目录，所有添加的插件都会被解压并复制到该目录下。</li>
+<li>hooks/：可以包含用于自定义 Cordova-CLI 命令的脚本， 您添加到这些目录的任何脚本都将在与目录名对应的命令之前和之后执行。 用于集成您自己的构建系统或与版本控制系统。</li>
+<li>merges/: 包含一些与特定平台相关联的 web 资源(HTML, CSS 和 JavaScript 文件),放在merges /下的文件将覆盖相关平台的www /文件夹中的匹配文件。 一个简单的例子，假设一个项目结构：</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">merges/</span><br><span class="line">|-- ios/</span><br><span class="line">| -- app.js</span><br><span class="line">|-- android/</span><br><span class="line">| -- android.js</span><br><span class="line">www/</span><br><span class="line">-- app.js</span><br></pre></td></tr></table></figure>
+<p>在构建Android和iOS项目之后，Android应用程序将同时包含app.js和android.js，而iOS应用程序则只包含app.js，它是将 merges/ios/app.js，覆盖位于www/内的通用的app.js。</p>
+<h4 id="添加平台"><a href="#添加平台" class="headerlink" title="添加平台"></a>添加平台</h4><p>首先进入项目目录:</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> hello</span><br></pre></td></tr></table></figure>
+<p>添加开发平台，会在 config.xml 和 package.json 中有记录:</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ cordova platform add ios</span><br><span class="line">$ cordova platform add android</span><br></pre></td></tr></table></figure>
+<p>执行上面两条命令后会在 platform 目录下生成 ios 和 android 两个子目录，用来存放编译后的代码和一些app的内容。</p>
+<p>查看项目已添加的平台：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ cordova platform <span class="built_in">ls</span></span><br></pre></td></tr></table></figure>
+<p>当在 www 目录下开发完毕后，用以下命令构建项目到各个平台：</p>
+<h4 id="构建前准备"><a href="#构建前准备" class="headerlink" title="构建前准备"></a>构建前准备</h4><p>要构建和运行应用程序，您需要为您想要开发的每个平台安装对应的SDK。 或者，如果您使用浏览器进行开发，则可以使用不需要任何平台SDK的浏览器平台。</p>
+<p>查看您是否满足必须条件：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ cordova requirements</span><br><span class="line">Requirements check results <span class="keyword">for</span> android:</span><br><span class="line">Java JDK: installed .</span><br><span class="line">Android SDK: installed</span><br><span class="line">Android target: installed android-19,android-21,android-22,android-23,Google Inc.:Google APIs:19,Google Inc.:Google APIs (x86 System Image):19,Google Inc.:Google APIs:23</span><br><span class="line">Gradle: installed</span><br><span class="line"></span><br><span class="line">Requirements check results <span class="keyword">for</span> ios:</span><br><span class="line">Apple OS X: not installed</span><br><span class="line">Cordova tooling <span class="keyword">for</span> iOS requires Apple OS X</span><br><span class="line">Error: Some of requirements check failed</span><br></pre></td></tr></table></figure>
 
-<h4 id="使用-hexo-分支"><a href="#使用-hexo-分支" class="headerlink" title="使用 hexo 分支"></a>使用 hexo 分支</h4><p>当需要在其他电脑编写博客时，就可以 clone 下来</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git <span class="built_in">clone</span> -b hexo https://github.com/yourname/xxx.github.io.git </span><br></pre></td></tr></table></figure>
-<p>然后在新电脑配置 hexo 环境(需先安装 node.js 环境)</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 安装 hexo-cli</span></span><br><span class="line">npm install hexo-cli -g</span><br><span class="line"></span><br><span class="line"><span class="comment"># 安装依赖</span></span><br><span class="line">npm install</span><br></pre></td></tr></table></figure>
-<h4 id="使用回顾"><a href="#使用回顾" class="headerlink" title="使用回顾"></a>使用回顾</h4><p>进入 hexo 分支目录，打开命令行</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 新建文章</span></span><br><span class="line">hexo new <span class="string">&quot;&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 新建类别</span></span><br><span class="line">hexo new page <span class="string">&quot;&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 生成静态文件</span></span><br><span class="line">hexo g</span><br><span class="line"></span><br><span class="line"><span class="comment"># 本地运行</span></span><br><span class="line">hexo s</span><br><span class="line"></span><br><span class="line"><span class="comment"># 部署到 github page</span></span><br><span class="line">hexo d</span><br></pre></td></tr></table></figure>
-<p>部署完毕后记得将源文件 push 到远程，同步博客内容。</p>
+
+<h4 id="应用构建与运行"><a href="#应用构建与运行" class="headerlink" title="应用构建与运行"></a>应用构建与运行</h4><h5 id="构建应用"><a href="#构建应用" class="headerlink" title="构建应用"></a>构建应用</h5><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">cordova build [&lt;platform&gt; [...]]</span><br><span class="line">    [--debug|--release]</span><br><span class="line">    [--device|--emulator]</span><br><span class="line">    [--buildConfig=&lt;configfile&gt;]</span><br><span class="line">    [--browserify]</span><br><span class="line">    [-- &lt;platformOpts&gt;]</span><br></pre></td></tr></table></figure>
+
+<table>
+<thead>
+<tr>
+<th>参数</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><platform>[…]</td>
+<td>要构建的平台名，没指定则为所有平台进行编译构建</td>
+</tr>
+<tr>
+<td>–debug</td>
+<td>构建调试模式</td>
+</tr>
+<tr>
+<td>–release</td>
+<td>构建发布模式</td>
+</tr>
+<tr>
+<td>–device</td>
+<td>构建到设备</td>
+</tr>
+<tr>
+<td>–emulator</td>
+<td>构建到模拟器</td>
+</tr>
+<tr>
+<td>–buildConfig=<configFile></td>
+<td>使用特定的配置文件来编译构建，如指定签名等。</td>
+</tr>
+<tr>
+<td>–browserity</td>
+<td>在构建时编译JS插件而不是运行时</td>
+</tr>
+<tr>
+<td><platformOpts></td>
+<td>提供特定的选项</td>
+</tr>
+</tbody></table>
+<h5 id="运行应用"><a href="#运行应用" class="headerlink" title="运行应用"></a>运行应用</h5><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">cordova run [&lt;platform&gt; [...]]</span><br><span class="line">    [--list | --debug | --release]</span><br><span class="line">    [--noprepare] [--nobuild]</span><br><span class="line">    [--device|--emulator|--target=&lt;targetName&gt;]</span><br><span class="line">    [--buildConfig=&lt;configfile&gt;]</span><br><span class="line">    [--browserify]</span><br><span class="line">    [-- &lt;platformOpts&gt;]</span><br></pre></td></tr></table></figure>
+
+
+<table>
+<thead>
+<tr>
+<th>参数</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><platform>[…]</td>
+<td>要运行的平台名，没指定则所有平台都运行</td>
+</tr>
+<tr>
+<td>–list</td>
+<td>列出可用的运行目标，包括模拟器和设备，除非特定指定</td>
+</tr>
+<tr>
+<td>–debug</td>
+<td>默认选型，运行调试模式</td>
+</tr>
+<tr>
+<td>–release</td>
+<td>运行发布模式</td>
+</tr>
+<tr>
+<td>–noprepare</td>
+<td>跳过准备阶段，适用于Cordova v6.2及其之后版本。</td>
+</tr>
+<tr>
+<td>–nobuild</td>
+<td>跳过重新构建阶段</td>
+</tr>
+<tr>
+<td>–device</td>
+<td>在设备上运行</td>
+</tr>
+<tr>
+<td>–emulator</td>
+<td>在模拟器上运行</td>
+</tr>
+<tr>
+<td>–target</td>
+<td>指定运行目标</td>
+</tr>
+<tr>
+<td>–buildConfig=<configFile></td>
+<td>使用特定的配置文件来编译构建，如指定签名等。</td>
+</tr>
+<tr>
+<td>–browserity</td>
+<td>在构建时编译JS插件而不是在运行时</td>
+</tr>
+<tr>
+<td><platformOpts></td>
+<td>提供特定的选项</td>
+</tr>
+</tbody></table>
+<h4 id="添加插件"><a href="#添加插件" class="headerlink" title="添加插件"></a>添加插件</h4><p>可以在 <a href="https://cordova.apache.org/plugins/">Cordova插件资源</a> 页面中查询需要的插件，也可以使用命令行搜索相关插件：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ cordova plugin search camera</span><br></pre></td></tr></table></figure>
+
+<p>添加某个插件：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ cordova plugin add cordova-plugin-camera</span><br><span class="line">Fetching plugin <span class="string">&quot;cordova-plugin-camera@~2.1.0&quot;</span> via npm</span><br><span class="line">Installing <span class="string">&quot;cordova-plugin-camera&quot;</span> <span class="keyword">for</span> android</span><br><span class="line">Installing <span class="string">&quot;cordova-plugin-camera&quot;</span> <span class="keyword">for</span> ios</span><br></pre></td></tr></table></figure>
+<p>插件也可以通过目录或 Git 仓库的形式添加</p>
+<p>注意：（CLI为每个平台添加适当的插件代码。 如果您希望使用概述中讨论的低级shell工具或平台SDK进行开发，则需要运行Plugman实用程序以为每个平台单独添加插件。 （有关更多信息，请参阅使用Plugman管理插件。）</p>
+<p>查看已安装的插件</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ cordova plugin <span class="built_in">ls</span></span><br><span class="line">cordova-plugin-camera 2.1.0 <span class="string">&quot;Camera&quot;</span></span><br><span class="line">cordova-plugin-whitelist 1.2.1 <span class="string">&quot;Whitelist&quot;</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="使用合并功能"><a href="#使用合并功能" class="headerlink" title="使用合并功能"></a>使用合并功能</h4><p>虽然Cordova允许您能够轻松地为许多不同平台部署应用程序，但实际上您时常需要添加一些自定义项。在这种情况下，您当然不希望修改不同平台下的www目录中的源文件，因为它们经常被顶级www目录的资源替换。</p>
+<p>因此，Cordova 在顶级目录下提供了一个位置(merge目录)可以指定在哪个平台部署资源。merge目录中的平台子目录都对应着 www源码目录机构，允许您根据需要覆盖或添加文件。例如，你可能会使用合并功能为 Android 设备设置默认的字体大小：</p>
+<ul>
+<li>在 www/index.html 文件中，添加一条指向额外的CSS样式文件的链接：overrides.css</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">&lt;<span class="built_in">link</span> rel=<span class="string">&quot;stylesheet&quot;</span> <span class="built_in">type</span>=<span class="string">&quot;text/css&quot;</span> href=<span class="string">&quot;css/overrides.css&quot;</span> /&gt;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>（可选）创建一个空的www / css / overrides.css文件，该文件适用于所有非Android版本，防止丢失文件错误。</li>
+<li>在merges / android中创建一个css子目录，然后添加一个相应的overrides.css文件。 指定覆盖www / css / index.css中指定的12磅默认字体大小的CSS，例如：</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">body &#123; font-size:14px; &#125;</span><br></pre></td></tr></table></figure>
+<p>当你重新构建项目后，只有 android 平台会应用自定义字体大小的样式，而其他平台保持不变。</p>
+<h4 id="更新-Cordova-和您的项目"><a href="#更新-Cordova-和您的项目" class="headerlink" title="更新 Cordova 和您的项目"></a>更新 Cordova 和您的项目</h4><p>升级 Cordova 版本:</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ sudo npm update -g cordova</span><br></pre></td></tr></table></figure>
+<p>安装指定的 Cordova 版本：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ sudo npm install -g cordova@3.1.0-0.2.0</span><br></pre></td></tr></table></figure>
+<p>查看 Cordova 版本：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">cordova -v</span><br></pre></td></tr></table></figure>
+<p>查看最新 Cordova 最新版本相关信息：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ npm info cordova version</span><br></pre></td></tr></table></figure>
+
+<p>更新指定的平台：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ cordova platform update android --save</span><br><span class="line">$ cordova platform update ios --save</span><br><span class="line">...etc.</span><br></pre></td></tr></table></figure>
+
+
+
 ]]></content>
       <categories>
-        <category>Interesting</category>
+        <category>mobile</category>
       </categories>
       <tags>
-        <tag>hexo</tag>
+        <tag>Cordova</tag>
       </tags>
   </entry>
   <entry>
@@ -900,6 +866,40 @@
       <tags>
         <tag>https</tag>
         <tag>SpringBoot</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Hexo更换电脑如何同步博客配置解决办法</title>
+    <url>/2020/03/28/hexo-online/</url>
+    <content><![CDATA[<h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>关于使用 Hexo 搭建个人博客可参考本人另一篇博文: <a href="https://blog.csdn.net/qq_23483671/article/details/78635372">Hexo框架+NextT主题搭建博客教程</a></p>
+<p>相信有不少小伙伴使用 Hexo 来搭建自己的个人博客，但问题是如果你电脑突然坏了，或者你想在其他电脑编辑发表你的博客，又要花费时间精力来重新配置你的站点，这样就比较麻烦。这时，我们可以将我们的站点放到 Github 或者其他 Git 托管平台，如此一来，无论你在哪里，都可以随时 clone 下来，简单配置下，就可以继续玩耍。</p>
+<span id="more"></span>
+
+<h3 id="实践"><a href="#实践" class="headerlink" title="实践"></a>实践</h3><h4 id="准备新仓库或新分支"><a href="#准备新仓库或新分支" class="headerlink" title="准备新仓库或新分支"></a>准备新仓库或新分支</h4><p>首先，你可以在 Github 创建一个新仓库或者直接在自己的 Gihubpage 仓库创建一条新 branch 来存放你的 hexo 相关配置文件。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 本地创建新分支 hexo 并切换到该分支</span></span><br><span class="line">git checkout -b hexo</span><br><span class="line"><span class="comment"># 推送分支并merge到远程分支hexo, 没有会自动创建</span></span><br><span class="line">git push origin hexo:hexo</span><br></pre></td></tr></table></figure>
+<p><strong>或者用 eclipse 管理仓库，创建新分支</strong><br><img data-src="https://wx4.sinaimg.cn/mw690/005GXpqPgy1gd9psy57o5j30gv0bf74p.jpg" alt="image"></p>
+<p><strong>推送分支到远程</strong><br><img data-src="https://wx1.sinaimg.cn/mw690/005GXpqPgy1gd9pt9yif0j30iu0ghjs7.jpg" alt="image"></p>
+<h4 id="删掉分支-hexo-下面除了-git-的内容"><a href="#删掉分支-hexo-下面除了-git-的内容" class="headerlink" title="删掉分支 hexo 下面除了 git 的内容"></a>删掉分支 hexo 下面除了 git 的内容</h4><p><img data-src="https://wx3.sinaimg.cn/mw690/005GXpqPgy1gd9ptqwgf8j30ld0e0ab4.jpg" alt="image"></p>
+<h4 id="将现有的-hexo-目录拷贝到该分支目录下"><a href="#将现有的-hexo-目录拷贝到该分支目录下" class="headerlink" title="将现有的 hexo 目录拷贝到该分支目录下"></a>将现有的 hexo 目录拷贝到该分支目录下</h4><p>要拷贝的文件或目录有：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">_config.yml</span><br><span class="line">package.json</span><br><span class="line">scaffolds/</span><br><span class="line"><span class="built_in">source</span>/</span><br><span class="line">themes/</span><br><span class="line">.gitignore</span><br></pre></td></tr></table></figure>
+<p>.gitignore 里的内容如下：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">.DS_Store</span><br><span class="line">Thumbs.db</span><br><span class="line">db.json</span><br><span class="line">*.<span class="built_in">log</span></span><br><span class="line">node_modules/</span><br><span class="line">public/</span><br><span class="line">.deploy*/</span><br></pre></td></tr></table></figure>
+<p><img data-src="https://wx3.sinaimg.cn/mw690/005GXpqPgy1gd9ptuwmgoj30l405vq35.jpg" alt="image"></p>
+<h4 id="推送到远程分支"><a href="#推送到远程分支" class="headerlink" title="推送到远程分支"></a>推送到远程分支</h4><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git add .</span><br><span class="line">git commit -m <span class="string">&quot;Add hexo&quot;</span></span><br><span class="line">git push</span><br></pre></td></tr></table></figure>
+
+<h4 id="使用-hexo-分支"><a href="#使用-hexo-分支" class="headerlink" title="使用 hexo 分支"></a>使用 hexo 分支</h4><p>当需要在其他电脑编写博客时，就可以 clone 下来</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git <span class="built_in">clone</span> -b hexo https://github.com/yourname/xxx.github.io.git </span><br></pre></td></tr></table></figure>
+<p>然后在新电脑配置 hexo 环境(需先安装 node.js 环境)</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 安装 hexo-cli</span></span><br><span class="line">npm install hexo-cli -g</span><br><span class="line"></span><br><span class="line"><span class="comment"># 安装依赖</span></span><br><span class="line">npm install</span><br></pre></td></tr></table></figure>
+<h4 id="使用回顾"><a href="#使用回顾" class="headerlink" title="使用回顾"></a>使用回顾</h4><p>进入 hexo 分支目录，打开命令行</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 新建文章</span></span><br><span class="line">hexo new <span class="string">&quot;&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 新建类别</span></span><br><span class="line">hexo new page <span class="string">&quot;&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 生成静态文件</span></span><br><span class="line">hexo g</span><br><span class="line"></span><br><span class="line"><span class="comment"># 本地运行</span></span><br><span class="line">hexo s</span><br><span class="line"></span><br><span class="line"><span class="comment"># 部署到 github page</span></span><br><span class="line">hexo d</span><br></pre></td></tr></table></figure>
+<p>部署完毕后记得将源文件 push 到远程，同步博客内容。</p>
+]]></content>
+      <categories>
+        <category>Interesting</category>
+      </categories>
+      <tags>
+        <tag>hexo</tag>
       </tags>
   </entry>
   <entry>
