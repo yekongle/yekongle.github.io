@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"yekongle.github.io","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":true,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":"valine","storage":true,"lazyload":true,"nav":null,"activeClass":"valine"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="用过视频剪辑软件的小伙伴们可能都会为添加视频字幕所烦恼，尤其是当一个视频包含了大量语音而且只有你一个人在配字幕的时候,那就变得很蛋疼；尽管到最后你完成了这么庞大的工作量，但是你都会一度怀疑自己的人生。我曾经为一个十来分钟的视频配字幕都配到我想吐。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="PR视频字幕批量生成程序(用讯飞听见识别音频)">
+<meta property="og:url" content="https://yekongle.github.io/2017/11/23/auto-caption-procedure/index.html">
+<meta property="og:site_name" content="Yekongle">
+<meta property="og:description" content="用过视频剪辑软件的小伙伴们可能都会为添加视频字幕所烦恼，尤其是当一个视频包含了大量语音而且只有你一个人在配字幕的时候,那就变得很蛋疼；尽管到最后你完成了这么庞大的工作量，但是你都会一度怀疑自己的人生。我曾经为一个十来分钟的视频配字幕都配到我想吐。">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://wx4.sinaimg.cn/large/005GXpqPgy1fznubgrdgcj31go0o5gnb.jpg">
+<meta property="og:image" content="http://wx2.sinaimg.cn/large/005GXpqPgy1fznubhi7nfj31gf0qcach.jpg">
+<meta property="og:image" content="http://wx2.sinaimg.cn/large/005GXpqPgy1fznubhz9w6j31gk0odabf.jpg">
+<meta property="og:image" content="http://wx4.sinaimg.cn/large/005GXpqPgy1fznubihbpxj31gw0h4wfb.jpg">
+<meta property="og:image" content="http://wx3.sinaimg.cn/large/005GXpqPgy1fznubj74hqj31g90aswf0.jpg">
+<meta property="og:image" content="http://wx2.sinaimg.cn/large/005GXpqPgy1fznubjvbaoj31go0c7mxm.jpg">
+<meta property="og:image" content="http://wx1.sinaimg.cn/large/005GXpqPgy1fznubkcwmjj31870hxmxw.jpg">
+<meta property="og:image" content="http://wx3.sinaimg.cn/large/005GXpqPgy1fznubku4h4j30ku00xjr9.jpg">
+<meta property="og:image" content="http://wx4.sinaimg.cn/large/005GXpqPgy1fznublexorj30ou03v3yj.jpg">
+<meta property="og:image" content="http://wx2.sinaimg.cn/large/005GXpqPgy1fznubm3s4kj30q40d70tb.jpg">
+<meta property="og:image" content="http://wx2.sinaimg.cn/large/005GXpqPgy1fznubmn3ydj31gl0qxgoa.jpg">
+<meta property="og:image" content="http://wx1.sinaimg.cn/large/005GXpqPgy1fznubnb96uj31gd0q477m.jpg">
+<meta property="og:image" content="http://wx3.sinaimg.cn/large/005GXpqPgy1fznubnrrugj30ua04dq34.jpg">
+<meta property="og:image" content="http://wx4.sinaimg.cn/large/005GXpqPgy1fznubor3h6j31gc0nzdp1.jpg">
+<meta property="og:image" content="http://wx1.sinaimg.cn/large/005GXpqPgy1fznubpb4mpj30o60fi3zr.jpg">
+<meta property="og:image" content="http://wx1.sinaimg.cn/large/005GXpqPgy1fznubpxy0fj30na04j74f.jpg">
+<meta property="og:image" content="http://wx1.sinaimg.cn/large/005GXpqPgy1fznubqer6fj31910f5wg0.jpg">
+<meta property="og:image" content="http://wx1.sinaimg.cn/large/005GXpqPgy1fznubqxflkj319f0cnmyh.jpg">
+<meta property="article:published_time" content="2017-11-23T08:52:20.000Z">
+<meta property="article:modified_time" content="2022-03-18T13:50:49.479Z">
+<meta property="article:author" content="Hank Lau">
+<meta property="article:tag" content="Clip">
+<meta property="article:tag" content="Caption">
+<meta property="article:tag" content="Java">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://wx4.sinaimg.cn/large/005GXpqPgy1fznubgrdgcj31go0o5gnb.jpg">
+
+<link rel="canonical" href="https://yekongle.github.io/2017/11/23/auto-caption-procedure/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'en'
+  };
+</script>
+
+  <title>PR视频字幕批量生成程序(用讯飞听见识别音频) | Yekongle</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<link rel="alternate" href="/atom.xml" title="Yekongle" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Yekongle</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>About</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>Search
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="Searching..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://yekongle.github.io/2017/11/23/auto-caption-procedure/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/head.png">
+      <meta itemprop="name" content="Hank Lau">
+      <meta itemprop="description" content="努力，奋斗！">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Yekongle">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          PR视频字幕批量生成程序(用讯飞听见识别音频)
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2017-11-23 16:52:20" itemprop="dateCreated datePublished" datetime="2017-11-23T16:52:20+08:00">2017-11-23</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2022-03-18 21:50:49" itemprop="dateModified" datetime="2022-03-18T21:50:49+08:00">2022-03-18</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Interesting/" itemprop="url" rel="index"><span itemprop="name">Interesting</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="Views" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">Views: </span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine: </span>
+    
+    <a title="valine" href="/2017/11/23/auto-caption-procedure/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2017/11/23/auto-caption-procedure/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p> 用过视频剪辑软件的小伙伴们可能都会为添加视频字幕所烦恼，尤其是当一个视频包含了大量语音而且只有你一个人在配字幕的时候,那就变得很蛋疼；尽管到最后你完成了这么庞大的工作量，但是你都会一度怀疑自己的人生。我曾经为一个十来分钟的视频配字幕都配到我想吐。</p>
+<span id="more"></span>
+
+<p> 然后我最近看B站发现一个挺有意思的事情,就是利用讯飞语音识别服务可以识别语音并且自动生成文字，这就省掉了不少人力去听的功夫。众所周知科大讯飞的语音识别功能是蛮强的，看过老罗手机发布会视频的就能知道。知道了这个功能后，我就想到要做一个PR字幕自动生成工具,下面将讲解我是怎么一步步实现的。</p>
+<p>  <img data-src="http://wx4.sinaimg.cn/large/005GXpqPgy1fznubgrdgcj31go0o5gnb.jpg" alt="image"></p>
+<p>首先打开<a target="_blank" rel="noopener" href="http://www.iflyrec.com/">讯飞听见</a>，遗憾的是，讯飞的这个语音识别功能是要收费的，看下价格，一种是机器快转（19.8元/小时），另一种是人机精转（80元/小时），看到这里，你是否心想：妖，都要收费的，我一个农村来的怎么负担得起。别急，我也是这样想的，继续往下看。点击上图的立即下单 </p>
+<p><img data-src="http://wx2.sinaimg.cn/large/005GXpqPgy1fznubhi7nfj31gf0qcach.jpg" alt="这里写图片描述"></p>
+<p>进入到这个页面，我们可以发现讯飞提供了一个体验的功能，就是你可以上传一段录音来体验一下他们家的这个语音识别功能，当然它是有限制的，你最多可以同时上传50条语音，每条语音不超过500M且不超过1分钟时长。所以说，这个功能对后期才配音的人员就比较友好。当然找个工具分割一下语音也是可以的，有空我再看看能不能写段代码实现语音分割。这里我上传了两条语音来试一下 </p>
+<p><img data-src="http://wx2.sinaimg.cn/large/005GXpqPgy1fznubhz9w6j31gk0odabf.jpg" alt="这里写图片描述"></p>
+<p><img data-src="http://wx4.sinaimg.cn/large/005GXpqPgy1fznubihbpxj31gw0h4wfb.jpg" alt="这里写图片描述"></p>
+<p>从上图可以看到它识别的准确度还是蛮高的。但如果你想要复制识别出来的文本是不行的，它已经做了限制了复制的功能。这里写了个js插件，可以一次性获取识别出的文本。</p>
+<p><img data-src="http://wx3.sinaimg.cn/large/005GXpqPgy1fznubj74hqj31g90aswf0.jpg" alt="这里写图片描述"></p>
+<p><img data-src="http://wx2.sinaimg.cn/large/005GXpqPgy1fznubjvbaoj31go0c7mxm.jpg" alt="这里写图片描述"></p>
+<p>在浏览器添加插件后刷新页面 ,可以发现红色箭头处多了个按钮，点击“获取数据”按钮就可以获得文本并显示在左边箭头所指的文本框里。右下角可以自由拉大缩小文本框</p>
+<p><img data-src="http://wx1.sinaimg.cn/large/005GXpqPgy1fznubkcwmjj31870hxmxw.jpg" alt="这里写图片描述"></p>
+<p>全选复制上图箭头所指文本框的内容，然后新建一个txt文件或者json文件，用记事本打开粘贴到里面,然后点击菜单文件的另存为,将编码ANSI改为UTF-8,保存。注意一定要更改编码，不然后面生成的字幕文件会出现乱码。</p>
+<p><img data-src="http://wx3.sinaimg.cn/large/005GXpqPgy1fznubku4h4j30ku00xjr9.jpg" alt="这里写图片描述"></p>
+<p><img data-src="http://wx4.sinaimg.cn/large/005GXpqPgy1fznublexorj30ou03v3yj.jpg" alt="这里写图片描述"></p>
+<p><img data-src="http://wx2.sinaimg.cn/large/005GXpqPgy1fznubm3s4kj30q40d70tb.jpg" alt="这里写图片描述"></p>
+<p>字幕文本保存好后，接下来就要生成一个字幕模板，这里使用的Premiere CC pro 2017软件。打开PR,先根据自己的喜好制作一个字幕样式当作字幕模板。接着选中字幕模板-&gt;文件-&gt;导出-&gt;标题,就可以生成一个字幕模板 </p>
+<p><img data-src="http://wx2.sinaimg.cn/large/005GXpqPgy1fznubmn3ydj31gl0qxgoa.jpg" alt="这里写图片描述"></p>
+<p><img data-src="http://wx1.sinaimg.cn/large/005GXpqPgy1fznubnb96uj31gd0q477m.jpg" alt="这里写图片描述"></p>
+<p>本来想分析一下整个序列的，但是不知什么原因PR导出Fianl cut pro xml总是提示有转换有问题，只好作罢。如果可以获得正确的序列的xml,就可以增改里面的代码，按时间线调整素材的顺序，再导入PR就可以自动排序好视频音频字幕的顺序 。(理论上是这样，但在我看到整个序列的xml之后，我有点怀疑我的想法，因为我感觉我在看天书。)</p>
+<p><img data-src="http://wx3.sinaimg.cn/large/005GXpqPgy1fznubnrrugj30ua04dq34.jpg" alt="这里写图片描述"></p>
+<p>这里我右击打开字幕文件，找到存放字幕文本的标签TRString,这样更改里面的文本就相当于换了一个字幕文件？如果你这样做PR是不能正确识别的。还有个地方需要注意的就是更改TRString下文本的同时也要注意这个文本的长度是多少，因为CharacterAttributes这个标签下的属RunCount就是记录文本字符的长度的。但就找到并了解它们就花了我大半天，晕~~。知道了这两个标签的作用后，就可以通过程序来修改它了。 </p>
+<p><img data-src="http://wx4.sinaimg.cn/large/005GXpqPgy1fznubor3h6j31gc0nzdp1.jpg" alt="这里写图片描述"></p>
+<p>OK,一切准备就绪，就是准备好了json格式的文本和字幕模板后，我们就可以通过java程序来整合他们并生成字幕了。这里我写了个java工具，可以完成这一平时操作起来非常耗时又费劲的工作。<br><img data-src="http://wx1.sinaimg.cn/large/005GXpqPgy1fznubpb4mpj30o60fi3zr.jpg" alt="这里写图片描述"></p>
+<p>用法也很简单，就是选择字幕模板，字幕文件和保存路径就可以批量生成字幕了，字幕文件将保存在一个名为Titles的目录里,这样方便整个目录拷贝到PR中。值得注意的是，目前仅支持PR CC版本的字幕文件。还有就是要运行它前提是要有<a target="_blank" rel="noopener" href="http://jingyan.baidu.com/article/e75aca85b29c3b142edac6a8.html">java运行环境</a>。其它版本的PR，如cs,非常有空或者有兴致的时候再改下。</p>
+<p> <img data-src="http://wx1.sinaimg.cn/large/005GXpqPgy1fznubpxy0fj30na04j74f.jpg" alt="这里写图片描述"></p>
+<p><img data-src="http://wx1.sinaimg.cn/large/005GXpqPgy1fznubqer6fj31910f5wg0.jpg" alt="这里写图片描述"> </p>
+<p><img data-src="http://wx1.sinaimg.cn/large/005GXpqPgy1fznubqxflkj319f0cnmyh.jpg" alt="这里写图片描述"></p>
+<p>可以看到生成的字幕文件导入后能够正确识别,样式也和原来的模板保持一致；时间线也是按顺序来的,只要在前面导入语音识别时顺序没搞乱的话。事实上一般你在配音的时候无论用的是手机还是录音笔，都是会按照一定的顺序生成文件名的，所以一般已经不会搞乱，我的建议是都把录音都放在一个单独的文件夹里。</p>
+<p>至此就完成了字幕的批量生成，只需用到两个工具，一个是js插件，用来获取讯飞识别出来的文本,一个是 java工具,一步到位生成字幕到指定目录。<br>如果想直接用这两个工具的话,戳这里:<a href="http://pan.baidu.com/s/1slBIYCl"  target="_brank">密码：9o5n</a></p>
+<p>如果想分析源码的话,戳这里:<a href="http://pan.baidu.com/s/1slwPYjj" target="_brank">密码：hsgl</a></p>
+
+    </div>
+
+    
+    
+    
+        <div class="reward-container">
+  <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    Donate
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="/images/wechatpay.jpg" alt="Hank Lau WeChat Pay">
+        <p>WeChat Pay</p>
+      </div>
+
+  </div>
+</div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Clip/" rel="tag"># Clip</a>
+              <a href="/tags/Caption/" rel="tag"># Caption</a>
+              <a href="/tags/Java/" rel="tag"># Java</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item"></div>
+      <div class="post-nav-item">
+    <a href="/2019/01/22/cordova-quick-learn/" rel="next" title="Cordova快速入门">
+      Cordova快速入门 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Hank Lau"
+      src="/images/head.png">
+  <p class="site-author-name" itemprop="name">Hank Lau</p>
+  <div class="site-description" itemprop="description">努力，奋斗！</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">8</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/yekongle" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;yekongle" rel="noopener" target="_blank"><i class="github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:973352916@qq.com" title="E-Mail → mailto:973352916@qq.com" rel="noopener" target="_blank"><i class="envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+<link rel="stylesheet" href="/css/APlayer.min.css">
+<link rel="stylesheet" href="/css/music.css">
+<div id="player"></div>
+<script src="/js/APlayer.min.js"></script>
+<script src="/js/music.js"></script>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Hank Lau</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a>
+  </div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="Total Visitors">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="Total Views">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+<script src="/js/bookmark.js"></script>
+
+
+
+
+  
+  <script>
+    (function(){
+      var canonicalURL, curProtocol;
+      //Get the <link> tag
+      var x=document.getElementsByTagName("link");
+		//Find the last canonical URL
+		if(x.length > 0){
+			for (i=0;i<x.length;i++){
+				if(x[i].rel.toLowerCase() == 'canonical' && x[i].href){
+					canonicalURL=x[i].href;
+				}
+			}
+		}
+    //Get protocol
+	    if (!canonicalURL){
+	    	curProtocol = window.location.protocol.split(':')[0];
+	    }
+	    else{
+	    	curProtocol = canonicalURL.split(':')[0];
+	    }
+      //Get current URL if the canonical URL does not exist
+	    if (!canonicalURL) canonicalURL = window.location.href;
+	    //Assign script content. Replace current URL with the canonical URL
+      !function(){var e=/([http|https]:\/\/[a-zA-Z0-9\_\.]+\.baidu\.com)/gi,r=canonicalURL,t=document.referrer;if(!e.test(r)){var n=(String(curProtocol).toLowerCase() === 'https')?"https://sp0.baidu.com/9_Q4simg2RQJ8t7jm9iCKT-xh_/s.gif":"//api.share.baidu.com/s.gif";t?(n+="?r="+encodeURIComponent(document.referrer),r&&(n+="&l="+r)):r&&(n+="?l="+r);var i=new Image;i.src=n}}(window);})();
+  </script>
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : false,
+      appId      : 'IfTxM4VBuxzrCUyz30iyRwtE-9Nh9j0Va',
+      appKey     : 'U7UzHCn8TtTogVH8lPP3lKl7',
+      placeholder: "ヾﾉ≧∀≦)o来啊，快活啊!",
+      avatar     : 'robohash',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : '' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+     <canvas class="fireworks" style="position: fixed;left: 0;top: 0;z-index: 1; pointer-events: none;" ></canvas>
+     <script type="text/javascript" src="//cdn.bootcss.com/animejs/2.2.0/anime.min.js"></script>
+     <script type="text/javascript" src="/js/fireworks.js"></script>
+</body>
+</html>

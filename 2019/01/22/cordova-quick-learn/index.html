@@ -1,0 +1,783 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"yekongle.github.io","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":true,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":"valine","storage":true,"lazyload":true,"nav":null,"activeClass":"valine"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="背景介绍数说移动端的几种开发模式 Native App: 采用原生代码进行，优点就是体验好，缺点是需要为不同的系统平台独立开发一套应用，开发成本较高。 Web app: 一般是指 SAP(SinglePageApplication) 模式开发出的网站，体验较差。  React Native App: 是 Facebook 开源的一套App开发解决方案，让你只使用 JavaScript 也能够编写原">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Cordova快速入门">
+<meta property="og:url" content="https://yekongle.github.io/2019/01/22/cordova-quick-learn/index.html">
+<meta property="og:site_name" content="Yekongle">
+<meta property="og:description" content="背景介绍数说移动端的几种开发模式 Native App: 采用原生代码进行，优点就是体验好，缺点是需要为不同的系统平台独立开发一套应用，开发成本较高。 Web app: 一般是指 SAP(SinglePageApplication) 模式开发出的网站，体验较差。  React Native App: 是 Facebook 开源的一套App开发解决方案，让你只使用 JavaScript 也能够编写原">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://wx2.sinaimg.cn/large/005GXpqPgy1fznuqhlz3vj30cc0fa74e.jpg">
+<meta property="og:image" content="http://wx1.sinaimg.cn/large/005GXpqPgy1fznuqi2d0oj30nf0ijgmp.jpg">
+<meta property="article:published_time" content="2019-01-21T16:39:51.000Z">
+<meta property="article:modified_time" content="2022-03-18T13:50:49.483Z">
+<meta property="article:author" content="Hank Lau">
+<meta property="article:tag" content="Cordova">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://wx2.sinaimg.cn/large/005GXpqPgy1fznuqhlz3vj30cc0fa74e.jpg">
+
+<link rel="canonical" href="https://yekongle.github.io/2019/01/22/cordova-quick-learn/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'en'
+  };
+</script>
+
+  <title>Cordova快速入门 | Yekongle</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<link rel="alternate" href="/atom.xml" title="Yekongle" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Yekongle</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>About</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>Search
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="Searching..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://yekongle.github.io/2019/01/22/cordova-quick-learn/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/head.png">
+      <meta itemprop="name" content="Hank Lau">
+      <meta itemprop="description" content="努力，奋斗！">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Yekongle">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Cordova快速入门
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2019-01-22 00:39:51" itemprop="dateCreated datePublished" datetime="2019-01-22T00:39:51+08:00">2019-01-22</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2022-03-18 21:50:49" itemprop="dateModified" datetime="2022-03-18T21:50:49+08:00">2022-03-18</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/mobile/" itemprop="url" rel="index"><span itemprop="name">mobile</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="Views" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">Views: </span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine: </span>
+    
+    <a title="valine" href="/2019/01/22/cordova-quick-learn/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2019/01/22/cordova-quick-learn/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h3 id="背景介绍"><a href="#背景介绍" class="headerlink" title="背景介绍"></a>背景介绍</h3><h4 id="数说移动端的几种开发模式"><a href="#数说移动端的几种开发模式" class="headerlink" title="数说移动端的几种开发模式"></a>数说移动端的几种开发模式</h4><ul>
+<li>Native App: 采用原生代码进行，优点就是体验好，缺点是需要为不同的系统平台独立开发一套应用，开发成本较高。</li>
+<li>Web app: 一般是指 SAP(SinglePageApplication) 模式开发出的网站，体验较差。</li>
+<li> React Native App: 是 Facebook 开源的一套App开发解决方案，让你只使用 JavaScript 也能够编写原生移动应用，它在设计原理上和 React 一致，通过声明式的组件机制来搭建丰富多彩的用户界面，能够实现大部分的跨平台，体验较好。</li>
+<li>Hybrid App: 混合开发模式，由Native 通过 JSBridge(一种)等方法提供统一的API，然后用前端语言(HTML、JS、CSS) 来写实际的界面和逻辑，再调用API，最终应用的页面是在 webview中示，从而达到跨平台效果，常见的是用Phonegap或Cordova中间件组合其他移动UI框架进行开发。</li>
+<li>值得注意的是，RN App 和 Hybrid App 还是有本质区别的，RN App 是用JavaScript告诉原生语言做什么，所以最终在平台上运行的都是原生语言，包括UI等，也是原生的组件，而 Hybrid App中显示的大多是 webview，webview 里套常见的移动UI框架。Hybird App的原理图如下W：</li>
+</ul>
+<span id="more"></span>
+
+<p><img data-src="http://wx2.sinaimg.cn/large/005GXpqPgy1fznuqhlz3vj30cc0fa74e.jpg" alt="image"></p>
+<h4 id="Cordova的前世今生"><a href="#Cordova的前世今生" class="headerlink" title="Cordova的前世今生"></a>Cordova的前世今生</h4><p>Cordova前身是 Phonegap，最先由 Nitobi 软件公司在2008年推出，旨在弥补 web 和 ios 之间的不足，使得 web 和 iphone SDK 之间的交互更容易，后来陆续加入了更多的平台。</p>
+<p>2011年，Adobe公司收购 Nitobi 后，将phonegap 项目的核心代码捐赠给了 Apache软件基金会(ASF), 使其保持透明和持续的发展，Apchae将其命名为 Cordova，而Adobe PhoneGap则发展出了一些服务型工具，如 Phonegap destop App、 Phonegap developer App、Phonegap build、Phonegap CLI等。</p>
+<p>很多人可能会问：那 Cordova 和 Phonegap 的区别到底是什么，其实Cordova相当于驱动 Phonegap 的核心引擎，就好比如 WebKit 是现在大多数浏览器的引擎一样，因此 Adobe PhoneGap可理解为是Apache Cordova 的应用发行版。</p>
+<p>Cordova的架构原理图如下，可知 Cordova 是混合App开发的一个中间件。</p>
+<p><img data-src="http://wx1.sinaimg.cn/large/005GXpqPgy1fznuqi2d0oj30nf0ijgmp.jpg" alt="image"></p>
+<h3 id="Cordova安装"><a href="#Cordova安装" class="headerlink" title="Cordova安装"></a>Cordova安装</h3><p>安装 Cordova 前，需要准备两样东西。</p>
+<ol>
+<li>下载安装 Node.js，这样就可以使用 Node.js 的 npm 软件管理包。</li>
+<li>安装 Git，因为当涉及到一些 git 仓库时会使用 git 来下载相关的资源。</li>
+</ol>
+<p>Mac Os 或 Linux平台：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo npm install -g cordova</span><br></pre></td></tr></table></figure>
+<p>Windows：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">C:\&gt;npm install -g cordova</span><br></pre></td></tr></table></figure>
+<p>-g 参数是指告诉 npm 要全局安装 Cordova，不然会被安装在当前目录的子目录 node_modules 下。</p>
+<h3 id="Cordova使用"><a href="#Cordova使用" class="headerlink" title="Cordova使用"></a>Cordova使用</h3><h4 id="创建一个-App-项目"><a href="#创建一个-App-项目" class="headerlink" title="创建一个 App 项目"></a>创建一个 App 项目</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cordova create hello[Required] com.example.hello[Optional] HelloWorld[Optional]</span><br></pre></td></tr></table></figure>
+<p>hello 是指项目文件夹名，com.example.hello 是应用程序的 ID 名，可在 config.xml 中更改。 HelloWorld，是 App 的名称，也可在 config.xml 中更改<br>这样就会创建最基本的App目录结构，默认会生成基于的web的应用主页，即为项目目录下的 www/index.html</p>
+<h4 id="目录结构"><a href="#目录结构" class="headerlink" title="目录结构"></a>目录结构</h4><p>Cordova 默认创建的 App 目录如下：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">myapp/</span><br><span class="line">|-- config.xml</span><br><span class="line">|-- hooks/</span><br><span class="line">|-- merges/</span><br><span class="line">| | |-- android/</span><br><span class="line">| | |-- windows/</span><br><span class="line">| | |-- ios/</span><br><span class="line">|-- www/</span><br><span class="line">|-- platforms/</span><br><span class="line">| |-- android/</span><br><span class="line">| |-- windows/</span><br><span class="line">| |-- ios/</span><br><span class="line">|-- plugins/</span><br><span class="line">  |--cordova-plugin-camera/</span><br></pre></td></tr></table></figure>
+<ul>
+<li>config.xml: 在这你可以自定义 App 项目的信息</li>
+<li>www/: 包括项目的web代码，如 html, css 和 js 文件，你将在这开发你 App 的主要代码，另外在 plaform 目录下的ios 目录或 android 目录下，也会有一个 www 目录，是基于 project/www 目录编译覆盖的。</li>
+<li>platform/: 包括你添加的平台的源码和脚本，注意一般不要该目录下的代码，否则可能造成在相关平台运行不了。</li>
+<li>plugins/: 插件目录，所有添加的插件都会被解压并复制到该目录下。</li>
+<li>hooks/：可以包含用于自定义 Cordova-CLI 命令的脚本， 您添加到这些目录的任何脚本都将在与目录名对应的命令之前和之后执行。 用于集成您自己的构建系统或与版本控制系统。</li>
+<li>merges/: 包含一些与特定平台相关联的 web 资源(HTML, CSS 和 JavaScript 文件),放在merges /下的文件将覆盖相关平台的www /文件夹中的匹配文件。 一个简单的例子，假设一个项目结构：</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">merges/</span><br><span class="line">|-- ios/</span><br><span class="line">| -- app.js</span><br><span class="line">|-- android/</span><br><span class="line">| -- android.js</span><br><span class="line">www/</span><br><span class="line">-- app.js</span><br></pre></td></tr></table></figure>
+<p>在构建Android和iOS项目之后，Android应用程序将同时包含app.js和android.js，而iOS应用程序则只包含app.js，它是将 merges/ios/app.js，覆盖位于www/内的通用的app.js。</p>
+<h4 id="添加平台"><a href="#添加平台" class="headerlink" title="添加平台"></a>添加平台</h4><p>首先进入项目目录:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> hello</span><br></pre></td></tr></table></figure>
+<p>添加开发平台，会在 config.xml 和 package.json 中有记录:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ cordova platform add ios</span><br><span class="line">$ cordova platform add android</span><br></pre></td></tr></table></figure>
+<p>执行上面两条命令后会在 platform 目录下生成 ios 和 android 两个子目录，用来存放编译后的代码和一些app的内容。</p>
+<p>查看项目已添加的平台：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ cordova platform <span class="built_in">ls</span></span><br></pre></td></tr></table></figure>
+<p>当在 www 目录下开发完毕后，用以下命令构建项目到各个平台：</p>
+<h4 id="构建前准备"><a href="#构建前准备" class="headerlink" title="构建前准备"></a>构建前准备</h4><p>要构建和运行应用程序，您需要为您想要开发的每个平台安装对应的SDK。 或者，如果您使用浏览器进行开发，则可以使用不需要任何平台SDK的浏览器平台。</p>
+<p>查看您是否满足必须条件：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">$ cordova requirements</span><br><span class="line">Requirements check results <span class="keyword">for</span> android:</span><br><span class="line">Java JDK: installed .</span><br><span class="line">Android SDK: installed</span><br><span class="line">Android target: installed android-19,android-21,android-22,android-23,Google Inc.:Google APIs:19,Google Inc.:Google APIs (x86 System Image):19,Google Inc.:Google APIs:23</span><br><span class="line">Gradle: installed</span><br><span class="line"></span><br><span class="line">Requirements check results <span class="keyword">for</span> ios:</span><br><span class="line">Apple OS X: not installed</span><br><span class="line">Cordova tooling <span class="keyword">for</span> iOS requires Apple OS X</span><br><span class="line">Error: Some of requirements check failed</span><br></pre></td></tr></table></figure>
+
+
+<h4 id="应用构建与运行"><a href="#应用构建与运行" class="headerlink" title="应用构建与运行"></a>应用构建与运行</h4><h5 id="构建应用"><a href="#构建应用" class="headerlink" title="构建应用"></a>构建应用</h5><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">cordova build [&lt;platform&gt; [...]]</span><br><span class="line">    [--debug|--release]</span><br><span class="line">    [--device|--emulator]</span><br><span class="line">    [--buildConfig=&lt;configfile&gt;]</span><br><span class="line">    [--browserify]</span><br><span class="line">    [-- &lt;platformOpts&gt;]</span><br></pre></td></tr></table></figure>
+
+<table>
+<thead>
+<tr>
+<th>参数</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><platform>[…]</td>
+<td>要构建的平台名，没指定则为所有平台进行编译构建</td>
+</tr>
+<tr>
+<td>–debug</td>
+<td>构建调试模式</td>
+</tr>
+<tr>
+<td>–release</td>
+<td>构建发布模式</td>
+</tr>
+<tr>
+<td>–device</td>
+<td>构建到设备</td>
+</tr>
+<tr>
+<td>–emulator</td>
+<td>构建到模拟器</td>
+</tr>
+<tr>
+<td>–buildConfig=<configFile></td>
+<td>使用特定的配置文件来编译构建，如指定签名等。</td>
+</tr>
+<tr>
+<td>–browserity</td>
+<td>在构建时编译JS插件而不是运行时</td>
+</tr>
+<tr>
+<td><platformOpts></td>
+<td>提供特定的选项</td>
+</tr>
+</tbody></table>
+<h5 id="运行应用"><a href="#运行应用" class="headerlink" title="运行应用"></a>运行应用</h5><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">cordova run [&lt;platform&gt; [...]]</span><br><span class="line">    [--list | --debug | --release]</span><br><span class="line">    [--noprepare] [--nobuild]</span><br><span class="line">    [--device|--emulator|--target=&lt;targetName&gt;]</span><br><span class="line">    [--buildConfig=&lt;configfile&gt;]</span><br><span class="line">    [--browserify]</span><br><span class="line">    [-- &lt;platformOpts&gt;]</span><br></pre></td></tr></table></figure>
+
+
+<table>
+<thead>
+<tr>
+<th>参数</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><platform>[…]</td>
+<td>要运行的平台名，没指定则所有平台都运行</td>
+</tr>
+<tr>
+<td>–list</td>
+<td>列出可用的运行目标，包括模拟器和设备，除非特定指定</td>
+</tr>
+<tr>
+<td>–debug</td>
+<td>默认选型，运行调试模式</td>
+</tr>
+<tr>
+<td>–release</td>
+<td>运行发布模式</td>
+</tr>
+<tr>
+<td>–noprepare</td>
+<td>跳过准备阶段，适用于Cordova v6.2及其之后版本。</td>
+</tr>
+<tr>
+<td>–nobuild</td>
+<td>跳过重新构建阶段</td>
+</tr>
+<tr>
+<td>–device</td>
+<td>在设备上运行</td>
+</tr>
+<tr>
+<td>–emulator</td>
+<td>在模拟器上运行</td>
+</tr>
+<tr>
+<td>–target</td>
+<td>指定运行目标</td>
+</tr>
+<tr>
+<td>–buildConfig=<configFile></td>
+<td>使用特定的配置文件来编译构建，如指定签名等。</td>
+</tr>
+<tr>
+<td>–browserity</td>
+<td>在构建时编译JS插件而不是在运行时</td>
+</tr>
+<tr>
+<td><platformOpts></td>
+<td>提供特定的选项</td>
+</tr>
+</tbody></table>
+<h4 id="添加插件"><a href="#添加插件" class="headerlink" title="添加插件"></a>添加插件</h4><p>可以在 <a target="_blank" rel="noopener" href="https://cordova.apache.org/plugins/">Cordova插件资源</a> 页面中查询需要的插件，也可以使用命令行搜索相关插件：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ cordova plugin search camera</span><br></pre></td></tr></table></figure>
+
+<p>添加某个插件：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ cordova plugin add cordova-plugin-camera</span><br><span class="line">Fetching plugin <span class="string">&quot;cordova-plugin-camera@~2.1.0&quot;</span> via npm</span><br><span class="line">Installing <span class="string">&quot;cordova-plugin-camera&quot;</span> <span class="keyword">for</span> android</span><br><span class="line">Installing <span class="string">&quot;cordova-plugin-camera&quot;</span> <span class="keyword">for</span> ios</span><br></pre></td></tr></table></figure>
+<p>插件也可以通过目录或 Git 仓库的形式添加</p>
+<p>注意：（CLI为每个平台添加适当的插件代码。 如果您希望使用概述中讨论的低级shell工具或平台SDK进行开发，则需要运行Plugman实用程序以为每个平台单独添加插件。 （有关更多信息，请参阅使用Plugman管理插件。）</p>
+<p>查看已安装的插件</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ cordova plugin <span class="built_in">ls</span></span><br><span class="line">cordova-plugin-camera 2.1.0 <span class="string">&quot;Camera&quot;</span></span><br><span class="line">cordova-plugin-whitelist 1.2.1 <span class="string">&quot;Whitelist&quot;</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="使用合并功能"><a href="#使用合并功能" class="headerlink" title="使用合并功能"></a>使用合并功能</h4><p>虽然Cordova允许您能够轻松地为许多不同平台部署应用程序，但实际上您时常需要添加一些自定义项。在这种情况下，您当然不希望修改不同平台下的www目录中的源文件，因为它们经常被顶级www目录的资源替换。</p>
+<p>因此，Cordova 在顶级目录下提供了一个位置(merge目录)可以指定在哪个平台部署资源。merge目录中的平台子目录都对应着 www源码目录机构，允许您根据需要覆盖或添加文件。例如，你可能会使用合并功能为 Android 设备设置默认的字体大小：</p>
+<ul>
+<li>在 www/index.html 文件中，添加一条指向额外的CSS样式文件的链接：overrides.css</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;<span class="built_in">link</span> rel=<span class="string">&quot;stylesheet&quot;</span> <span class="built_in">type</span>=<span class="string">&quot;text/css&quot;</span> href=<span class="string">&quot;css/overrides.css&quot;</span> /&gt;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>（可选）创建一个空的www / css / overrides.css文件，该文件适用于所有非Android版本，防止丢失文件错误。</li>
+<li>在merges / android中创建一个css子目录，然后添加一个相应的overrides.css文件。 指定覆盖www / css / index.css中指定的12磅默认字体大小的CSS，例如：</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">body &#123; font-size:14px; &#125;</span><br></pre></td></tr></table></figure>
+<p>当你重新构建项目后，只有 android 平台会应用自定义字体大小的样式，而其他平台保持不变。</p>
+<h4 id="更新-Cordova-和您的项目"><a href="#更新-Cordova-和您的项目" class="headerlink" title="更新 Cordova 和您的项目"></a>更新 Cordova 和您的项目</h4><p>升级 Cordova 版本:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ sudo npm update -g cordova</span><br></pre></td></tr></table></figure>
+<p>安装指定的 Cordova 版本：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ sudo npm install -g cordova@3.1.0-0.2.0</span><br></pre></td></tr></table></figure>
+<p>查看 Cordova 版本：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cordova -v</span><br></pre></td></tr></table></figure>
+<p>查看最新 Cordova 最新版本相关信息：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ npm info cordova version</span><br></pre></td></tr></table></figure>
+
+<p>更新指定的平台：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ cordova platform update android --save</span><br><span class="line">$ cordova platform update ios --save</span><br><span class="line">...etc.</span><br></pre></td></tr></table></figure>
+
+
+
+
+    </div>
+
+    
+    
+    
+        <div class="reward-container">
+  <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    Donate
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="/images/wechatpay.jpg" alt="Hank Lau WeChat Pay">
+        <p>WeChat Pay</p>
+      </div>
+
+  </div>
+</div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Cordova/" rel="tag"># Cordova</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2017/11/23/auto-caption-procedure/" rel="prev" title="PR视频字幕批量生成程序(用讯飞听见识别音频)">
+      <i class="fa fa-chevron-left"></i> PR视频字幕批量生成程序(用讯飞听见识别音频)
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2019/01/29/cordova-dev-learn/" rel="next" title="Cordova开发篇">
+      Cordova开发篇 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%83%8C%E6%99%AF%E4%BB%8B%E7%BB%8D"><span class="nav-number">1.</span> <span class="nav-text">背景介绍</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%95%B0%E8%AF%B4%E7%A7%BB%E5%8A%A8%E7%AB%AF%E7%9A%84%E5%87%A0%E7%A7%8D%E5%BC%80%E5%8F%91%E6%A8%A1%E5%BC%8F"><span class="nav-number">1.1.</span> <span class="nav-text">数说移动端的几种开发模式</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Cordova%E7%9A%84%E5%89%8D%E4%B8%96%E4%BB%8A%E7%94%9F"><span class="nav-number">1.2.</span> <span class="nav-text">Cordova的前世今生</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Cordova%E5%AE%89%E8%A3%85"><span class="nav-number">2.</span> <span class="nav-text">Cordova安装</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Cordova%E4%BD%BF%E7%94%A8"><span class="nav-number">3.</span> <span class="nav-text">Cordova使用</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%88%9B%E5%BB%BA%E4%B8%80%E4%B8%AA-App-%E9%A1%B9%E7%9B%AE"><span class="nav-number">3.1.</span> <span class="nav-text">创建一个 App 项目</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%9B%AE%E5%BD%95%E7%BB%93%E6%9E%84"><span class="nav-number">3.2.</span> <span class="nav-text">目录结构</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%B7%BB%E5%8A%A0%E5%B9%B3%E5%8F%B0"><span class="nav-number">3.3.</span> <span class="nav-text">添加平台</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%9E%84%E5%BB%BA%E5%89%8D%E5%87%86%E5%A4%87"><span class="nav-number">3.4.</span> <span class="nav-text">构建前准备</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%BA%94%E7%94%A8%E6%9E%84%E5%BB%BA%E4%B8%8E%E8%BF%90%E8%A1%8C"><span class="nav-number">3.5.</span> <span class="nav-text">应用构建与运行</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%9E%84%E5%BB%BA%E5%BA%94%E7%94%A8"><span class="nav-number">3.5.1.</span> <span class="nav-text">构建应用</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E8%BF%90%E8%A1%8C%E5%BA%94%E7%94%A8"><span class="nav-number">3.5.2.</span> <span class="nav-text">运行应用</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%B7%BB%E5%8A%A0%E6%8F%92%E4%BB%B6"><span class="nav-number">3.6.</span> <span class="nav-text">添加插件</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8%E5%90%88%E5%B9%B6%E5%8A%9F%E8%83%BD"><span class="nav-number">3.7.</span> <span class="nav-text">使用合并功能</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%9B%B4%E6%96%B0-Cordova-%E5%92%8C%E6%82%A8%E7%9A%84%E9%A1%B9%E7%9B%AE"><span class="nav-number">3.8.</span> <span class="nav-text">更新 Cordova 和您的项目</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Hank Lau"
+      src="/images/head.png">
+  <p class="site-author-name" itemprop="name">Hank Lau</p>
+  <div class="site-description" itemprop="description">努力，奋斗！</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">8</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/yekongle" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;yekongle" rel="noopener" target="_blank"><i class="github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:973352916@qq.com" title="E-Mail → mailto:973352916@qq.com" rel="noopener" target="_blank"><i class="envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+<link rel="stylesheet" href="/css/APlayer.min.css">
+<link rel="stylesheet" href="/css/music.css">
+<div id="player"></div>
+<script src="/js/APlayer.min.js"></script>
+<script src="/js/music.js"></script>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Hank Lau</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a>
+  </div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="Total Visitors">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="Total Views">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+<script src="/js/bookmark.js"></script>
+
+
+
+
+  
+  <script>
+    (function(){
+      var canonicalURL, curProtocol;
+      //Get the <link> tag
+      var x=document.getElementsByTagName("link");
+		//Find the last canonical URL
+		if(x.length > 0){
+			for (i=0;i<x.length;i++){
+				if(x[i].rel.toLowerCase() == 'canonical' && x[i].href){
+					canonicalURL=x[i].href;
+				}
+			}
+		}
+    //Get protocol
+	    if (!canonicalURL){
+	    	curProtocol = window.location.protocol.split(':')[0];
+	    }
+	    else{
+	    	curProtocol = canonicalURL.split(':')[0];
+	    }
+      //Get current URL if the canonical URL does not exist
+	    if (!canonicalURL) canonicalURL = window.location.href;
+	    //Assign script content. Replace current URL with the canonical URL
+      !function(){var e=/([http|https]:\/\/[a-zA-Z0-9\_\.]+\.baidu\.com)/gi,r=canonicalURL,t=document.referrer;if(!e.test(r)){var n=(String(curProtocol).toLowerCase() === 'https')?"https://sp0.baidu.com/9_Q4simg2RQJ8t7jm9iCKT-xh_/s.gif":"//api.share.baidu.com/s.gif";t?(n+="?r="+encodeURIComponent(document.referrer),r&&(n+="&l="+r)):r&&(n+="?l="+r);var i=new Image;i.src=n}}(window);})();
+  </script>
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : false,
+      appId      : 'IfTxM4VBuxzrCUyz30iyRwtE-9Nh9j0Va',
+      appKey     : 'U7UzHCn8TtTogVH8lPP3lKl7',
+      placeholder: "ヾﾉ≧∀≦)o来啊，快活啊!",
+      avatar     : 'robohash',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : '' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+     <canvas class="fireworks" style="position: fixed;left: 0;top: 0;z-index: 1; pointer-events: none;" ></canvas>
+     <script type="text/javascript" src="//cdn.bootcss.com/animejs/2.2.0/anime.min.js"></script>
+     <script type="text/javascript" src="/js/fireworks.js"></script>
+</body>
+</html>
