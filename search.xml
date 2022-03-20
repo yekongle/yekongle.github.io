@@ -7,7 +7,7 @@
 <span id="more"></span>
 
 <p> 然后我最近看B站发现一个挺有意思的事情,就是利用讯飞语音识别服务可以识别语音并且自动生成文字，这就省掉了不少人力去听的功夫。众所周知科大讯飞的语音识别功能是蛮强的，看过老罗手机发布会视频的就能知道。知道了这个功能后，我就想到要做一个PR字幕自动生成工具,下面将讲解我是怎么一步步实现的。</p>
-<p>  <img data-src="http://wx4.sinaimg.cn/large/005GXpqPgy1fznubgrdgcj31go0o5gnb.jpg" alt="image"></p>
+<p>  <img data-src="https://cdn.jsdelivr.net/gh/yekongle/PhotoManager@master/blog/images/auto_caption/1.jpg" alt="image"></p>
 <p>首先打开<a href="http://www.iflyrec.com/">讯飞听见</a>，遗憾的是，讯飞的这个语音识别功能是要收费的，看下价格，一种是机器快转（19.8元/小时），另一种是人机精转（80元/小时），看到这里，你是否心想：妖，都要收费的，我一个农村来的怎么负担得起。别急，我也是这样想的，继续往下看。点击上图的立即下单 </p>
 <p><img data-src="http://wx2.sinaimg.cn/large/005GXpqPgy1fznubhi7nfj31gf0qcach.jpg" alt="这里写图片描述"></p>
 <p>进入到这个页面，我们可以发现讯飞提供了一个体验的功能，就是你可以上传一段录音来体验一下他们家的这个语音识别功能，当然它是有限制的，你最多可以同时上传50条语音，每条语音不超过500M且不超过1分钟时长。所以说，这个功能对后期才配音的人员就比较友好。当然找个工具分割一下语音也是可以的，有空我再看看能不能写段代码实现语音分割。这里我上传了两条语音来试一下 </p>
