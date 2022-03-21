@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
@@ -25,20 +25,20 @@
 <meta property="og:type" content="article">
 <meta property="og:title" content="Cordova开发篇">
 <meta property="og:url" content="https://yekongle.github.io/2019/01/29/cordova-dev-learn/index.html">
-<meta property="og:site_name" content="Yekongle">
+<meta property="og:site_name" content="Power Atom&#39;s Blog">
 <meta property="og:description" content="Android 平台支持的Android API级别和过去几个cordova-android版本的Android版本：    cordova-android 版本 支持的 API 级别 实际安卓版本    7.X.X 19 - 27 4.4 - 8.1   6.X.X 16 - 26 4.1 - 8.0.0   5.X.X 14 - 23 4.0 - 6.0.1   4.1.X 14 - 22 4">
-<meta property="og:locale" content="en_US">
-<meta property="og:image" content="http://wx3.sinaimg.cn/mw690/005GXpqPgy1fznuqimewhj30ff0c140y.jpg">
-<meta property="og:image" content="http://wx4.sinaimg.cn/mw690/005GXpqPgy1fznuqj7lpoj309r0b6jt6.jpg">
-<meta property="og:image" content="http://wx1.sinaimg.cn/mw690/005GXpqPgy1fznuqk4xd4j30jr0ceadh.jpg">
-<meta property="og:image" content="http://wx2.sinaimg.cn/large/005GXpqPgy1fznuqknlcyj30v80b20v8.jpg">
-<meta property="og:image" content="http://wx3.sinaimg.cn/large/005GXpqPgy1fznuqm5s1lj30wy0mf0wn.jpg">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/yekongle/PhotoManager@master/blog/images/frontend/cordova/develop/1.jpg">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/yekongle/PhotoManager@master/blog/images/frontend/cordova/develop/2.jpg">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/yekongle/PhotoManager@master/blog/images/frontend/cordova/develop/3.jpg">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/yekongle/PhotoManager@master/blog/images/frontend/cordova/develop/4.jpg">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/yekongle/PhotoManager@master/blog/images/frontend/cordova/develop/5.jpg">
 <meta property="article:published_time" content="2019-01-29T15:06:16.000Z">
-<meta property="article:modified_time" content="2022-03-18T13:50:49.483Z">
-<meta property="article:author" content="Hank Lau">
+<meta property="article:modified_time" content="2022-03-20T08:57:13.895Z">
+<meta property="article:author" content="var author &#x3D; &#39;hank&#39;">
 <meta property="article:tag" content="Cordova">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="http://wx3.sinaimg.cn/mw690/005GXpqPgy1fznuqimewhj30ff0c140y.jpg">
+<meta name="twitter:image" content="https://cdn.jsdelivr.net/gh/yekongle/PhotoManager@master/blog/images/frontend/cordova/develop/1.jpg">
 
 <link rel="canonical" href="https://yekongle.github.io/2019/01/29/cordova-dev-learn/">
 
@@ -49,11 +49,11 @@
     sidebar: "",
     isHome : false,
     isPost : true,
-    lang   : 'en'
+    lang   : 'zh-CN'
   };
 </script>
 
-  <title>Cordova开发篇 | Yekongle</title>
+  <title>Cordova开发篇 | Power Atom's Blog</title>
   
 
 
@@ -84,8 +84,8 @@
   </style>
 </noscript>
 
-<link rel="alternate" href="/atom.xml" title="Yekongle" type="application/atom+xml">
-</head>
+<link rel="alternate" href="/atom.xml" title="Power Atom's Blog" type="application/atom+xml">
+<style>.darkmode--activated{--body-bg-color:#282828;--content-bg-color:#333;--card-bg-color:#555;--text-color:#ccc;--blockquote-color:#bbb;--link-color:#ccc;--link-hover-color:#eee;--brand-color:#ddd;--brand-hover-color:#ddd;--table-row-odd-bg-color:#282828;--table-row-hover-bg-color:#363636;--menu-item-bg-color:#555;--btn-default-bg:#222;--btn-default-color:#ccc;--btn-default-border-color:#555;--btn-default-hover-bg:#666;--btn-default-hover-color:#ccc;--btn-default-hover-border-color:#666;--highlight-background:#282b2e;--highlight-foreground:#a9b7c6;--highlight-gutter-background:#34393d;--highlight-gutter-foreground:#9ca9b6}.darkmode--activated img{opacity:.75}.darkmode--activated img:hover{opacity:.9}.darkmode--activated code{color:#69dbdc;background:0 0}button.darkmode-toggle{z-index:9999}.darkmode-ignore,img{display:flex!important}</style></head>
 
 <body itemscope itemtype="http://schema.org/WebPage">
   <div class="container use-motion">
@@ -94,7 +94,7 @@
     <header class="header" itemscope itemtype="http://schema.org/WPHeader">
       <div class="header-inner"><div class="site-brand-container">
   <div class="site-nav-toggle">
-    <div class="toggle" aria-label="Toggle navigation bar">
+    <div class="toggle" aria-label="切换导航栏">
       <span class="toggle-line toggle-line-first"></span>
       <span class="toggle-line toggle-line-middle"></span>
       <span class="toggle-line toggle-line-last"></span>
@@ -105,7 +105,7 @@
 
     <a href="/" class="brand" rel="start">
       <span class="logo-line-before"><i></i></span>
-      <h1 class="site-title">Yekongle</h1>
+      <h1 class="site-title">Power Atom's Blog</h1>
       <span class="logo-line-after"><i></i></span>
     </a>
   </div>
@@ -124,31 +124,31 @@
   <ul id="menu" class="main-menu menu">
         <li class="menu-item menu-item-home">
 
-    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
 
   </li>
         <li class="menu-item menu-item-about">
 
-    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>About</a>
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
 
   </li>
         <li class="menu-item menu-item-tags">
 
-    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a>
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
 
   </li>
         <li class="menu-item menu-item-categories">
 
-    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a>
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
 
   </li>
         <li class="menu-item menu-item-archives">
 
-    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
 
   </li>
       <li class="menu-item menu-item-search">
-        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>Search
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
         </a>
       </li>
   </ul>
@@ -164,7 +164,7 @@
   </span>
   <div class="search-input-container">
     <input autocomplete="off" autocapitalize="off"
-           placeholder="Searching..." spellcheck="false"
+           placeholder="搜索..." spellcheck="false"
            type="search" class="search-input">
   </div>
   <span class="popup-btn-close">
@@ -203,17 +203,17 @@
     
   
   
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://yekongle.github.io/2019/01/29/cordova-dev-learn/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/head.png">
-      <meta itemprop="name" content="Hank Lau">
-      <meta itemprop="description" content="努力，奋斗！">
+      <meta itemprop="name" content="var author = 'hank'">
+      <meta itemprop="description" content="指尖改变世界">
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Yekongle">
+      <meta itemprop="name" content="Power Atom's Blog">
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
@@ -225,33 +225,33 @@
               <span class="post-meta-item-icon">
                 <i class="far fa-calendar"></i>
               </span>
-              <span class="post-meta-item-text">Posted on</span>
+              <span class="post-meta-item-text">发表于</span>
 
-              <time title="Created: 2019-01-29 23:06:16" itemprop="dateCreated datePublished" datetime="2019-01-29T23:06:16+08:00">2019-01-29</time>
+              <time title="创建时间：2019-01-29 23:06:16" itemprop="dateCreated datePublished" datetime="2019-01-29T23:06:16+08:00">2019-01-29</time>
             </span>
               <span class="post-meta-item">
                 <span class="post-meta-item-icon">
                   <i class="far fa-calendar-check"></i>
                 </span>
-                <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2022-03-18 21:50:49" itemprop="dateModified" datetime="2022-03-18T21:50:49+08:00">2022-03-18</time>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-03-20 16:57:13" itemprop="dateModified" datetime="2022-03-20T16:57:13+08:00">2022-03-20</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
                 <i class="far fa-folder"></i>
               </span>
-              <span class="post-meta-item-text">In</span>
+              <span class="post-meta-item-text">分类于</span>
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
                   <a href="/categories/mobile/" itemprop="url" rel="index"><span itemprop="name">mobile</span></a>
                 </span>
             </span>
 
           
-            <span class="post-meta-item" title="Views" id="busuanzi_container_page_pv" style="display: none;">
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
               <span class="post-meta-item-icon">
                 <i class="fa fa-eye"></i>
               </span>
-              <span class="post-meta-item-text">Views: </span>
+              <span class="post-meta-item-text">阅读次数：</span>
               <span id="busuanzi_value_page_pv"></span>
             </span>
   
@@ -260,7 +260,7 @@
       <span class="post-meta-item-icon">
         <i class="far fa-comment"></i>
       </span>
-      <span class="post-meta-item-text">Valine: </span>
+      <span class="post-meta-item-text">Valine：</span>
     
     <a title="valine" href="/2019/01/29/cordova-dev-learn/#valine-comments" itemprop="discussionUrl">
       <span class="post-comments-count valine-comment-count" data-xid="/2019/01/29/cordova-dev-learn/" itemprop="commentCount"></span>
@@ -358,7 +358,7 @@
 <h4 id="项目配置"><a href="#项目配置" class="headerlink" title="项目配置"></a>项目配置</h4><h5 id="模拟器配置："><a href="#模拟器配置：" class="headerlink" title="模拟器配置："></a>模拟器配置：</h5><p>如果您希望你的Cordova App 运行在安卓模拟器上，您首先需要创建一个安卓虚拟机(AVD), 通常可以在 Android Studio 上快速创建和配置。AVD 创建完后，便可以通过 Cordova 命令运行App在模拟器上：</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ cordova run --emulator</span><br></pre></td></tr></table></figure>
 
-<h5 id="Gradle-配置："><a href="#Gradle-配置：" class="headerlink" title="Gradle 配置："></a>Gradle 配置：</h5><p>对于<a href="mailto:&#99;&#111;&#x72;&#x64;&#x6f;&#118;&#97;&#x2d;&#x61;&#x6e;&#x64;&#x72;&#x6f;&#105;&#100;&#x40;&#52;&#x2e;&#x30;&#x2e;&#x30;">&#99;&#111;&#x72;&#x64;&#x6f;&#118;&#97;&#x2d;&#x61;&#x6e;&#x64;&#x72;&#x6f;&#105;&#100;&#x40;&#52;&#x2e;&#x30;&#x2e;&#x30;</a> 以上，Cordova的安卓项目是使用Gradle构建的。 有关使用Ant构建的说明，请参阅文档的旧版本，注意，从Android SDK Tools 25.3.0开始，就已经不推荐使用Ant版本。</p>
+<h5 id="Gradle-配置："><a href="#Gradle-配置：" class="headerlink" title="Gradle 配置："></a>Gradle 配置：</h5><p>对于<a href="mailto:&#99;&#111;&#x72;&#100;&#x6f;&#118;&#97;&#x2d;&#x61;&#110;&#100;&#x72;&#x6f;&#105;&#x64;&#x40;&#52;&#x2e;&#x30;&#x2e;&#48;">&#99;&#111;&#x72;&#100;&#x6f;&#118;&#97;&#x2d;&#x61;&#110;&#100;&#x72;&#x6f;&#105;&#x64;&#x40;&#52;&#x2e;&#x30;&#x2e;&#48;</a> 以上，Cordova的安卓项目是使用Gradle构建的。 有关使用Ant构建的说明，请参阅文档的旧版本，注意，从Android SDK Tools 25.3.0开始，就已经不推荐使用Ant版本。</p>
 <p>Gradle属性配置：</p>
 <p>可以通过设置 Cordova 公开的一些属性来配置 Gradle，以下是关于这些属性的说明：</p>
 <table>
@@ -497,11 +497,11 @@
 <p>要在Android Studio中打开Cordova-Android 项目：</p>
 <ol>
 <li>启动 Android Studio</li>
-<li>选择导入一个项目<br><img data-src="http://wx3.sinaimg.cn/mw690/005GXpqPgy1fznuqimewhj30ff0c140y.jpg" alt="image"></li>
-<li>选择 Android 平台目录，(<your-project>/platforms/android).</li>
+<li>选择导入一个项目<br><img data-src="https://cdn.jsdelivr.net/gh/yekongle/PhotoManager@master/blog/images/frontend/cordova/develop/1.jpg"></li>
+<li>选择 Android 平台目录，(<your-project>/platforms/android).<br><img data-src="https://cdn.jsdelivr.net/gh/yekongle/PhotoManager@master/blog/images/frontend/cordova/develop/2.jpg"></li>
+<li>对于Gradle Sync问题，您只需回答“是”即可。</li>
 </ol>
-<p><img data-src="http://wx4.sinaimg.cn/mw690/005GXpqPgy1fznuqj7lpoj309r0b6jt6.jpg" alt="image"><br>4. 对于Gradle Sync问题，您只需回答“是”即可。</p>
-<p>完成导入后，您应该能够直接从Android Studio构建和运行应用程序。 有关详细信息，请参阅Android Studio概述以及从Android Studio构建和运行。<br><img data-src="http://wx1.sinaimg.cn/mw690/005GXpqPgy1fznuqk4xd4j30jr0ceadh.jpg" alt="image"></p>
+<p>完成导入后，您应该能够直接从Android Studio构建和运行应用程序。 有关详细信息，请参阅Android Studio概述以及从Android Studio构建和运行。<br><img data-src="https://cdn.jsdelivr.net/gh/yekongle/PhotoManager@master/blog/images/frontend/cordova/develop/3.jpg"></p>
 <h4 id="以平台为中心的工作流程"><a href="#以平台为中心的工作流程" class="headerlink" title="以平台为中心的工作流程"></a>以平台为中心的工作流程</h4><p>cordova-android包含许多脚本，允许在没有完整Cordova CLI的情况下使用该平台。 在某些情况下，此开发路径可为您提供比跨平台cordova CLI更多的开发选项。 例如，在将自定义Cordova WebView与本机组件一起部署时，需要使用shell工具。 在使用此开发路径之前，您仍必须按照上面的“要求和支持”中的说明配置Android SDK环境。</p>
 <p>有关下面讨论的每个脚本，请参阅 <a target="_blank" rel="noopener" href="https://cordova.apache.org/docs/en/latest/reference/cordova-cli/index.html">Cordova CLI</a>。 每个脚本都有一个与相应CLI命令匹配的名称。 例如，cordova-android / bin / create相当于cordova创建。</p>
 <p>首先，从npm或Github下载cordova-android软件包。</p>
@@ -613,7 +613,7 @@
 <h5 id="部署应用到模拟器"><a href="#部署应用到模拟器" class="headerlink" title="部署应用到模拟器"></a>部署应用到模拟器</h5><p>要在iOS模拟器中预览应用程序：</p>
 <ol>
 <li>从Xcode或命令行打开工作区文件（platforms / ios / HelloWorld.xcworkspace）：<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ open ./platforms/ios/HelloWorld.xcworkspace/</span><br></pre></td></tr></table></figure></li>
-<li>确保在左侧面板中选择了HelloWorld项目（1）。<br><img data-src="http://wx2.sinaimg.cn/large/005GXpqPgy1fznuqknlcyj30v80b20v8.jpg" alt="image"></li>
+<li>确保在左侧面板中选择了HelloWorld项目（1）。<br><img data-src="https://cdn.jsdelivr.net/gh/yekongle/PhotoManager@master/blog/images/frontend/cordova/develop/4.jpg"></li>
 </ol>
 <ul>
 <li>从工具栏的 <strong>Scheme</strong> 菜单中选择目标设备，例如（2）中突出显示的iPhone 7 Plus Simulator</li>
@@ -688,7 +688,7 @@
 <p>希望在IDE中编辑其原生代码的插件开发人员在通过cordova插件添加将其插件添加到项目时应使用–link标志。这将链接文件，以便对平台文件夹中的插件文件的更改反映在插件的源文件夹中（反之亦然）。</p>
 <p>将ios平台添加到项目并使用cordova构建后，您可以在Xcode中打开它。双击打开$ {PROJECT_NAME} / platforms / ios / $ {PROJECT_NAME} .xcworkspace文件或从终端打开Xcode：</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ open -a Xcode platforms/ios</span><br></pre></td></tr></table></figure>
-<p>界面如下所示：<br><img data-src="http://wx3.sinaimg.cn/large/005GXpqPgy1fznuqm5s1lj30wy0mf0wn.jpg" alt="image"></p>
+<p>界面如下所示：<br><img data-src="https://cdn.jsdelivr.net/gh/yekongle/PhotoManager@master/blog/images/frontend/cordova/develop/5.jpg"></p>
 <h4 id="更新"><a href="#更新" class="headerlink" title="更新"></a>更新</h4><p>有关升级cordova-ios版本的说明，请参阅此<a target="_blank" rel="noopener" href="https://cordova.apache.org/docs/en/latest/guide/platforms/ios/upgrade.html">文章</a>。
  </p>
 
@@ -700,16 +700,33 @@
         <div class="reward-container">
   <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
   <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
-    Donate
+    打赏
   </button>
   <div id="qr" style="display: none;">
       
       <div style="display: inline-block;">
-        <img src="/images/wechatpay.jpg" alt="Hank Lau WeChat Pay">
-        <p>WeChat Pay</p>
+        <img src="/images/wechatpay.jpg" alt="var author = 'hank' 微信支付">
+        <p>微信支付</p>
       </div>
 
   </div>
+</div>
+
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>var author = 'hank'
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://yekongle.github.io/2019/01/29/cordova-dev-learn/" title="Cordova开发篇">https://yekongle.github.io/2019/01/29/cordova-dev-learn/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
 </div>
 
 
@@ -781,10 +798,10 @@
 
       <ul class="sidebar-nav motion-element">
         <li class="sidebar-nav-toc">
-          Table of Contents
+          文章目录
         </li>
         <li class="sidebar-nav-overview">
-          Overview
+          站点概览
         </li>
       </ul>
 
@@ -796,10 +813,10 @@
 
       <div class="site-overview-wrap sidebar-panel">
         <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
-    <img class="site-author-image" itemprop="image" alt="Hank Lau"
+    <img class="site-author-image" itemprop="image" alt="var author = 'hank'"
       src="/images/head.png">
-  <p class="site-author-name" itemprop="name">Hank Lau</p>
-  <div class="site-description" itemprop="description">努力，奋斗！</div>
+  <p class="site-author-name" itemprop="name">var author = 'hank'</p>
+  <div class="site-description" itemprop="description">指尖改变世界</div>
 </div>
 <div class="site-state-wrap motion-element">
   <nav class="site-state">
@@ -807,20 +824,20 @@
           <a href="/archives/">
         
           <span class="site-state-item-count">8</span>
-          <span class="site-state-item-name">posts</span>
+          <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
           
         <span class="site-state-item-count">4</span>
-        <span class="site-state-item-name">categories</span></a>
+        <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
         <span class="site-state-item-count">7</span>
-        <span class="site-state-item-name">tags</span></a>
+        <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
 </div>
@@ -830,6 +847,9 @@
       </span>
       <span class="links-of-author-item">
         <a href="mailto:973352916@qq.com" title="E-Mail → mailto:973352916@qq.com" rel="noopener" target="_blank"><i class="envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/atom.xml" title="RSS → &#x2F;atom.xml"><i class="fa fa-rss fa-fw"></i>RSS</a>
       </span>
   </div>
 
@@ -864,9 +884,9 @@
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>
-  <span class="author" itemprop="copyrightHolder">Hank Lau</span>
+  <span class="author" itemprop="copyrightHolder">var author = 'hank'</span>
 </div>
-  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
   </div>
 
         
@@ -876,7 +896,7 @@
       <span class="post-meta-item-icon">
         <i class="fa fa-user"></i>
       </span>
-      <span class="site-uv" title="Total Visitors">
+      <span class="site-uv" title="总访客量">
         <span id="busuanzi_value_site_uv"></span>
       </span>
     </span>
@@ -885,7 +905,7 @@
       <span class="post-meta-item-icon">
         <i class="fa fa-eye"></i>
       </span>
-      <span class="site-pv" title="Total Views">
+      <span class="site-pv" title="总访问量">
         <span id="busuanzi_value_site_pv"></span>
       </span>
     </span>
@@ -973,6 +993,33 @@
   
 
   
+<script src="https://cdn.jsdelivr.net/npm/darkmode-js@1.5.7/lib/darkmode-js.min.js"></script>
+
+<script>
+var options = {
+  bottom: '64px',
+  right: 'unset',
+  left: '32px',
+  time: '0.5s',
+  mixColor: 'transparent',
+  backgroundColor: 'transparent',
+  buttonColorDark: '#100f2c',
+  buttonColorLight: '#fff',
+  saveInCookies: false,
+  label: '🌓',
+  autoMatchOsTheme: false
+}
+const darkmode = new Darkmode(options);
+window.darkmode = darkmode;
+darkmode.showWidget();
+if (window.darkmode && !window.darkmode.isActivated()) {
+  window.darkmode.toggle();
+  var toggleButtons = document.getElementsByClassName("darkmode-toggle");
+  for (i = 0; i < toggleButtons.length; i++) {
+    toggleButtons[i].classList.add("darkmode-toggle--white");
+  }
+}
+</script>
 
 
 <script>

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
@@ -25,35 +25,35 @@
 <meta property="og:type" content="article">
 <meta property="og:title" content="PR视频字幕批量生成程序(用讯飞听见识别音频)">
 <meta property="og:url" content="https://yekongle.github.io/2017/11/23/auto-caption-procedure/index.html">
-<meta property="og:site_name" content="Yekongle">
+<meta property="og:site_name" content="Power Atom&#39;s Blog">
 <meta property="og:description" content="用过视频剪辑软件的小伙伴们可能都会为添加视频字幕所烦恼，尤其是当一个视频包含了大量语音而且只有你一个人在配字幕的时候,那就变得很蛋疼；尽管到最后你完成了这么庞大的工作量，但是你都会一度怀疑自己的人生。我曾经为一个十来分钟的视频配字幕都配到我想吐。">
-<meta property="og:locale" content="en_US">
-<meta property="og:image" content="https://cdn.jsdelivr.net/gh/yekongle/PhotoManager@master/blog/images/auto_caption/1.jpg">
-<meta property="og:image" content="http://wx2.sinaimg.cn/large/005GXpqPgy1fznubhi7nfj31gf0qcach.jpg">
-<meta property="og:image" content="http://wx2.sinaimg.cn/large/005GXpqPgy1fznubhz9w6j31gk0odabf.jpg">
-<meta property="og:image" content="http://wx4.sinaimg.cn/large/005GXpqPgy1fznubihbpxj31gw0h4wfb.jpg">
-<meta property="og:image" content="http://wx3.sinaimg.cn/large/005GXpqPgy1fznubj74hqj31g90aswf0.jpg">
-<meta property="og:image" content="http://wx2.sinaimg.cn/large/005GXpqPgy1fznubjvbaoj31go0c7mxm.jpg">
-<meta property="og:image" content="http://wx1.sinaimg.cn/large/005GXpqPgy1fznubkcwmjj31870hxmxw.jpg">
-<meta property="og:image" content="http://wx3.sinaimg.cn/large/005GXpqPgy1fznubku4h4j30ku00xjr9.jpg">
-<meta property="og:image" content="http://wx4.sinaimg.cn/large/005GXpqPgy1fznublexorj30ou03v3yj.jpg">
-<meta property="og:image" content="http://wx2.sinaimg.cn/large/005GXpqPgy1fznubm3s4kj30q40d70tb.jpg">
-<meta property="og:image" content="http://wx2.sinaimg.cn/large/005GXpqPgy1fznubmn3ydj31gl0qxgoa.jpg">
-<meta property="og:image" content="http://wx1.sinaimg.cn/large/005GXpqPgy1fznubnb96uj31gd0q477m.jpg">
-<meta property="og:image" content="http://wx3.sinaimg.cn/large/005GXpqPgy1fznubnrrugj30ua04dq34.jpg">
-<meta property="og:image" content="http://wx4.sinaimg.cn/large/005GXpqPgy1fznubor3h6j31gc0nzdp1.jpg">
-<meta property="og:image" content="http://wx1.sinaimg.cn/large/005GXpqPgy1fznubpb4mpj30o60fi3zr.jpg">
-<meta property="og:image" content="http://wx1.sinaimg.cn/large/005GXpqPgy1fznubpxy0fj30na04j74f.jpg">
-<meta property="og:image" content="http://wx1.sinaimg.cn/large/005GXpqPgy1fznubqer6fj31910f5wg0.jpg">
-<meta property="og:image" content="http://wx1.sinaimg.cn/large/005GXpqPgy1fznubqxflkj319f0cnmyh.jpg">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/yekongle/PhotoManager@master/blog/images/interesting/auto_caption/1.jpg">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/yekongle/PhotoManager@master/blog/images/interesting/auto_caption/2.jpg">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/yekongle/PhotoManager@master/blog/images/interesting/auto_caption/3.jpg">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/yekongle/PhotoManager@master/blog/images/interesting/auto_caption/4.jpg">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/yekongle/PhotoManager@master/blog/images/interesting/auto_caption/5.jpg">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/yekongle/PhotoManager@master/blog/images/interesting/auto_caption/6.jpg">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/yekongle/PhotoManager@master/blog/images/interesting/auto_caption/7.jpg">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/yekongle/PhotoManager@master/blog/images/interesting/auto_caption/8.jpg">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/yekongle/PhotoManager@master/blog/images/interesting/auto_caption/9.jpg">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/yekongle/PhotoManager@master/blog/images/interesting/auto_caption/10.jpg">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/yekongle/PhotoManager@master/blog/images/interesting/auto_caption/11.jpg">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/yekongle/PhotoManager@master/blog/images/interesting/auto_caption/12.jpg">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/yekongle/PhotoManager@master/blog/images/interesting/auto_caption/13.jpg">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/yekongle/PhotoManager@master/blog/images/interesting/auto_caption/14.jpg">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/yekongle/PhotoManager@master/blog/images/interesting/auto_caption/15.jpg">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/yekongle/PhotoManager@master/blog/images/interesting/auto_caption/16.jpg">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/yekongle/PhotoManager@master/blog/images/interesting/auto_caption/17.jpg">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/yekongle/PhotoManager@master/blog/images/interesting/auto_caption/18.jpg">
 <meta property="article:published_time" content="2017-11-23T08:52:20.000Z">
-<meta property="article:modified_time" content="2022-03-20T07:01:27.048Z">
-<meta property="article:author" content="Hank Lau">
+<meta property="article:modified_time" content="2022-03-20T08:42:34.871Z">
+<meta property="article:author" content="var author &#x3D; &#39;hank&#39;">
 <meta property="article:tag" content="Clip">
 <meta property="article:tag" content="Caption">
 <meta property="article:tag" content="Java">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://cdn.jsdelivr.net/gh/yekongle/PhotoManager@master/blog/images/auto_caption/1.jpg">
+<meta name="twitter:image" content="https://cdn.jsdelivr.net/gh/yekongle/PhotoManager@master/blog/images/interesting/auto_caption/1.jpg">
 
 <link rel="canonical" href="https://yekongle.github.io/2017/11/23/auto-caption-procedure/">
 
@@ -64,11 +64,11 @@
     sidebar: "",
     isHome : false,
     isPost : true,
-    lang   : 'en'
+    lang   : 'zh-CN'
   };
 </script>
 
-  <title>PR视频字幕批量生成程序(用讯飞听见识别音频) | Yekongle</title>
+  <title>PR视频字幕批量生成程序(用讯飞听见识别音频) | Power Atom's Blog</title>
   
 
 
@@ -99,8 +99,8 @@
   </style>
 </noscript>
 
-<link rel="alternate" href="/atom.xml" title="Yekongle" type="application/atom+xml">
-</head>
+<link rel="alternate" href="/atom.xml" title="Power Atom's Blog" type="application/atom+xml">
+<style>.darkmode--activated{--body-bg-color:#282828;--content-bg-color:#333;--card-bg-color:#555;--text-color:#ccc;--blockquote-color:#bbb;--link-color:#ccc;--link-hover-color:#eee;--brand-color:#ddd;--brand-hover-color:#ddd;--table-row-odd-bg-color:#282828;--table-row-hover-bg-color:#363636;--menu-item-bg-color:#555;--btn-default-bg:#222;--btn-default-color:#ccc;--btn-default-border-color:#555;--btn-default-hover-bg:#666;--btn-default-hover-color:#ccc;--btn-default-hover-border-color:#666;--highlight-background:#282b2e;--highlight-foreground:#a9b7c6;--highlight-gutter-background:#34393d;--highlight-gutter-foreground:#9ca9b6}.darkmode--activated img{opacity:.75}.darkmode--activated img:hover{opacity:.9}.darkmode--activated code{color:#69dbdc;background:0 0}button.darkmode-toggle{z-index:9999}.darkmode-ignore,img{display:flex!important}</style></head>
 
 <body itemscope itemtype="http://schema.org/WebPage">
   <div class="container use-motion">
@@ -109,7 +109,7 @@
     <header class="header" itemscope itemtype="http://schema.org/WPHeader">
       <div class="header-inner"><div class="site-brand-container">
   <div class="site-nav-toggle">
-    <div class="toggle" aria-label="Toggle navigation bar">
+    <div class="toggle" aria-label="切换导航栏">
       <span class="toggle-line toggle-line-first"></span>
       <span class="toggle-line toggle-line-middle"></span>
       <span class="toggle-line toggle-line-last"></span>
@@ -120,7 +120,7 @@
 
     <a href="/" class="brand" rel="start">
       <span class="logo-line-before"><i></i></span>
-      <h1 class="site-title">Yekongle</h1>
+      <h1 class="site-title">Power Atom's Blog</h1>
       <span class="logo-line-after"><i></i></span>
     </a>
   </div>
@@ -139,31 +139,31 @@
   <ul id="menu" class="main-menu menu">
         <li class="menu-item menu-item-home">
 
-    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
 
   </li>
         <li class="menu-item menu-item-about">
 
-    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>About</a>
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
 
   </li>
         <li class="menu-item menu-item-tags">
 
-    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a>
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
 
   </li>
         <li class="menu-item menu-item-categories">
 
-    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a>
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
 
   </li>
         <li class="menu-item menu-item-archives">
 
-    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
 
   </li>
       <li class="menu-item menu-item-search">
-        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>Search
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
         </a>
       </li>
   </ul>
@@ -179,7 +179,7 @@
   </span>
   <div class="search-input-container">
     <input autocomplete="off" autocapitalize="off"
-           placeholder="Searching..." spellcheck="false"
+           placeholder="搜索..." spellcheck="false"
            type="search" class="search-input">
   </div>
   <span class="popup-btn-close">
@@ -218,17 +218,17 @@
     
   
   
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://yekongle.github.io/2017/11/23/auto-caption-procedure/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/head.png">
-      <meta itemprop="name" content="Hank Lau">
-      <meta itemprop="description" content="努力，奋斗！">
+      <meta itemprop="name" content="var author = 'hank'">
+      <meta itemprop="description" content="指尖改变世界">
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Yekongle">
+      <meta itemprop="name" content="Power Atom's Blog">
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
@@ -240,33 +240,33 @@
               <span class="post-meta-item-icon">
                 <i class="far fa-calendar"></i>
               </span>
-              <span class="post-meta-item-text">Posted on</span>
+              <span class="post-meta-item-text">发表于</span>
 
-              <time title="Created: 2017-11-23 16:52:20" itemprop="dateCreated datePublished" datetime="2017-11-23T16:52:20+08:00">2017-11-23</time>
+              <time title="创建时间：2017-11-23 16:52:20" itemprop="dateCreated datePublished" datetime="2017-11-23T16:52:20+08:00">2017-11-23</time>
             </span>
               <span class="post-meta-item">
                 <span class="post-meta-item-icon">
                   <i class="far fa-calendar-check"></i>
                 </span>
-                <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2022-03-20 15:01:27" itemprop="dateModified" datetime="2022-03-20T15:01:27+08:00">2022-03-20</time>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-03-20 16:42:34" itemprop="dateModified" datetime="2022-03-20T16:42:34+08:00">2022-03-20</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
                 <i class="far fa-folder"></i>
               </span>
-              <span class="post-meta-item-text">In</span>
+              <span class="post-meta-item-text">分类于</span>
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
                   <a href="/categories/Interesting/" itemprop="url" rel="index"><span itemprop="name">Interesting</span></a>
                 </span>
             </span>
 
           
-            <span class="post-meta-item" title="Views" id="busuanzi_container_page_pv" style="display: none;">
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
               <span class="post-meta-item-icon">
                 <i class="fa fa-eye"></i>
               </span>
-              <span class="post-meta-item-text">Views: </span>
+              <span class="post-meta-item-text">阅读次数：</span>
               <span id="busuanzi_value_page_pv"></span>
             </span>
   
@@ -275,7 +275,7 @@
       <span class="post-meta-item-icon">
         <i class="far fa-comment"></i>
       </span>
-      <span class="post-meta-item-text">Valine: </span>
+      <span class="post-meta-item-text">Valine：</span>
     
     <a title="valine" href="/2017/11/23/auto-caption-procedure/#valine-comments" itemprop="discussionUrl">
       <span class="post-comments-count valine-comment-count" data-xid="/2017/11/23/auto-caption-procedure/" itemprop="commentCount"></span>
@@ -297,33 +297,33 @@
 <span id="more"></span>
 
 <p> 然后我最近看B站发现一个挺有意思的事情,就是利用讯飞语音识别服务可以识别语音并且自动生成文字，这就省掉了不少人力去听的功夫。众所周知科大讯飞的语音识别功能是蛮强的，看过老罗手机发布会视频的就能知道。知道了这个功能后，我就想到要做一个PR字幕自动生成工具,下面将讲解我是怎么一步步实现的。</p>
-<p>  <img data-src="https://cdn.jsdelivr.net/gh/yekongle/PhotoManager@master/blog/images/auto_caption/1.jpg" alt="image"></p>
+<p>  <img data-src="https://cdn.jsdelivr.net/gh/yekongle/PhotoManager@master/blog/images/interesting/auto_caption/1.jpg"></p>
 <p>首先打开<a target="_blank" rel="noopener" href="http://www.iflyrec.com/">讯飞听见</a>，遗憾的是，讯飞的这个语音识别功能是要收费的，看下价格，一种是机器快转（19.8元/小时），另一种是人机精转（80元/小时），看到这里，你是否心想：妖，都要收费的，我一个农村来的怎么负担得起。别急，我也是这样想的，继续往下看。点击上图的立即下单 </p>
-<p><img data-src="http://wx2.sinaimg.cn/large/005GXpqPgy1fznubhi7nfj31gf0qcach.jpg" alt="这里写图片描述"></p>
+<p><img data-src="https://cdn.jsdelivr.net/gh/yekongle/PhotoManager@master/blog/images/interesting/auto_caption/2.jpg"></p>
 <p>进入到这个页面，我们可以发现讯飞提供了一个体验的功能，就是你可以上传一段录音来体验一下他们家的这个语音识别功能，当然它是有限制的，你最多可以同时上传50条语音，每条语音不超过500M且不超过1分钟时长。所以说，这个功能对后期才配音的人员就比较友好。当然找个工具分割一下语音也是可以的，有空我再看看能不能写段代码实现语音分割。这里我上传了两条语音来试一下 </p>
-<p><img data-src="http://wx2.sinaimg.cn/large/005GXpqPgy1fznubhz9w6j31gk0odabf.jpg" alt="这里写图片描述"></p>
-<p><img data-src="http://wx4.sinaimg.cn/large/005GXpqPgy1fznubihbpxj31gw0h4wfb.jpg" alt="这里写图片描述"></p>
+<p><img data-src="https://cdn.jsdelivr.net/gh/yekongle/PhotoManager@master/blog/images/interesting/auto_caption/3.jpg"></p>
+<p><img data-src="https://cdn.jsdelivr.net/gh/yekongle/PhotoManager@master/blog/images/interesting/auto_caption/4.jpg"></p>
 <p>从上图可以看到它识别的准确度还是蛮高的。但如果你想要复制识别出来的文本是不行的，它已经做了限制了复制的功能。这里写了个js插件，可以一次性获取识别出的文本。</p>
-<p><img data-src="http://wx3.sinaimg.cn/large/005GXpqPgy1fznubj74hqj31g90aswf0.jpg" alt="这里写图片描述"></p>
-<p><img data-src="http://wx2.sinaimg.cn/large/005GXpqPgy1fznubjvbaoj31go0c7mxm.jpg" alt="这里写图片描述"></p>
+<p><img data-src="https://cdn.jsdelivr.net/gh/yekongle/PhotoManager@master/blog/images/interesting/auto_caption/5.jpg"></p>
+<p><img data-src="https://cdn.jsdelivr.net/gh/yekongle/PhotoManager@master/blog/images/interesting/auto_caption/6.jpg"></p>
 <p>在浏览器添加插件后刷新页面 ,可以发现红色箭头处多了个按钮，点击“获取数据”按钮就可以获得文本并显示在左边箭头所指的文本框里。右下角可以自由拉大缩小文本框</p>
-<p><img data-src="http://wx1.sinaimg.cn/large/005GXpqPgy1fznubkcwmjj31870hxmxw.jpg" alt="这里写图片描述"></p>
+<p><img data-src="https://cdn.jsdelivr.net/gh/yekongle/PhotoManager@master/blog/images/interesting/auto_caption/7.jpg"></p>
 <p>全选复制上图箭头所指文本框的内容，然后新建一个txt文件或者json文件，用记事本打开粘贴到里面,然后点击菜单文件的另存为,将编码ANSI改为UTF-8,保存。注意一定要更改编码，不然后面生成的字幕文件会出现乱码。</p>
-<p><img data-src="http://wx3.sinaimg.cn/large/005GXpqPgy1fznubku4h4j30ku00xjr9.jpg" alt="这里写图片描述"></p>
-<p><img data-src="http://wx4.sinaimg.cn/large/005GXpqPgy1fznublexorj30ou03v3yj.jpg" alt="这里写图片描述"></p>
-<p><img data-src="http://wx2.sinaimg.cn/large/005GXpqPgy1fznubm3s4kj30q40d70tb.jpg" alt="这里写图片描述"></p>
+<p><img data-src="https://cdn.jsdelivr.net/gh/yekongle/PhotoManager@master/blog/images/interesting/auto_caption/8.jpg"></p>
+<p><img data-src="https://cdn.jsdelivr.net/gh/yekongle/PhotoManager@master/blog/images/interesting/auto_caption/9.jpg"></p>
+<p><img data-src="https://cdn.jsdelivr.net/gh/yekongle/PhotoManager@master/blog/images/interesting/auto_caption/10.jpg"></p>
 <p>字幕文本保存好后，接下来就要生成一个字幕模板，这里使用的Premiere CC pro 2017软件。打开PR,先根据自己的喜好制作一个字幕样式当作字幕模板。接着选中字幕模板-&gt;文件-&gt;导出-&gt;标题,就可以生成一个字幕模板 </p>
-<p><img data-src="http://wx2.sinaimg.cn/large/005GXpqPgy1fznubmn3ydj31gl0qxgoa.jpg" alt="这里写图片描述"></p>
-<p><img data-src="http://wx1.sinaimg.cn/large/005GXpqPgy1fznubnb96uj31gd0q477m.jpg" alt="这里写图片描述"></p>
+<p><img data-src="https://cdn.jsdelivr.net/gh/yekongle/PhotoManager@master/blog/images/interesting/auto_caption/11.jpg"></p>
+<p><img data-src="https://cdn.jsdelivr.net/gh/yekongle/PhotoManager@master/blog/images/interesting/auto_caption/12.jpg"></p>
 <p>本来想分析一下整个序列的，但是不知什么原因PR导出Fianl cut pro xml总是提示有转换有问题，只好作罢。如果可以获得正确的序列的xml,就可以增改里面的代码，按时间线调整素材的顺序，再导入PR就可以自动排序好视频音频字幕的顺序 。(理论上是这样，但在我看到整个序列的xml之后，我有点怀疑我的想法，因为我感觉我在看天书。)</p>
-<p><img data-src="http://wx3.sinaimg.cn/large/005GXpqPgy1fznubnrrugj30ua04dq34.jpg" alt="这里写图片描述"></p>
+<p><img data-src="https://cdn.jsdelivr.net/gh/yekongle/PhotoManager@master/blog/images/interesting/auto_caption/13.jpg"></p>
 <p>这里我右击打开字幕文件，找到存放字幕文本的标签TRString,这样更改里面的文本就相当于换了一个字幕文件？如果你这样做PR是不能正确识别的。还有个地方需要注意的就是更改TRString下文本的同时也要注意这个文本的长度是多少，因为CharacterAttributes这个标签下的属RunCount就是记录文本字符的长度的。但就找到并了解它们就花了我大半天，晕~~。知道了这两个标签的作用后，就可以通过程序来修改它了。 </p>
-<p><img data-src="http://wx4.sinaimg.cn/large/005GXpqPgy1fznubor3h6j31gc0nzdp1.jpg" alt="这里写图片描述"></p>
-<p>OK,一切准备就绪，就是准备好了json格式的文本和字幕模板后，我们就可以通过java程序来整合他们并生成字幕了。这里我写了个java工具，可以完成这一平时操作起来非常耗时又费劲的工作。<br><img data-src="http://wx1.sinaimg.cn/large/005GXpqPgy1fznubpb4mpj30o60fi3zr.jpg" alt="这里写图片描述"></p>
+<p><img data-src="https://cdn.jsdelivr.net/gh/yekongle/PhotoManager@master/blog/images/interesting/auto_caption/14.jpg"></p>
+<p>OK,一切准备就绪，就是准备好了json格式的文本和字幕模板后，我们就可以通过java程序来整合他们并生成字幕了。这里我写了个java工具，可以完成这一平时操作起来非常耗时又费劲的工作。<br><img data-src="https://cdn.jsdelivr.net/gh/yekongle/PhotoManager@master/blog/images/interesting/auto_caption/15.jpg"></p>
 <p>用法也很简单，就是选择字幕模板，字幕文件和保存路径就可以批量生成字幕了，字幕文件将保存在一个名为Titles的目录里,这样方便整个目录拷贝到PR中。值得注意的是，目前仅支持PR CC版本的字幕文件。还有就是要运行它前提是要有<a target="_blank" rel="noopener" href="http://jingyan.baidu.com/article/e75aca85b29c3b142edac6a8.html">java运行环境</a>。其它版本的PR，如cs,非常有空或者有兴致的时候再改下。</p>
-<p> <img data-src="http://wx1.sinaimg.cn/large/005GXpqPgy1fznubpxy0fj30na04j74f.jpg" alt="这里写图片描述"></p>
-<p><img data-src="http://wx1.sinaimg.cn/large/005GXpqPgy1fznubqer6fj31910f5wg0.jpg" alt="这里写图片描述"> </p>
-<p><img data-src="http://wx1.sinaimg.cn/large/005GXpqPgy1fznubqxflkj319f0cnmyh.jpg" alt="这里写图片描述"></p>
+<p> <img data-src="https://cdn.jsdelivr.net/gh/yekongle/PhotoManager@master/blog/images/interesting/auto_caption/16.jpg"></p>
+<p><img data-src="https://cdn.jsdelivr.net/gh/yekongle/PhotoManager@master/blog/images/interesting/auto_caption/17.jpg"> </p>
+<p><img data-src="https://cdn.jsdelivr.net/gh/yekongle/PhotoManager@master/blog/images/interesting/auto_caption/18.jpg"></p>
 <p>可以看到生成的字幕文件导入后能够正确识别,样式也和原来的模板保持一致；时间线也是按顺序来的,只要在前面导入语音识别时顺序没搞乱的话。事实上一般你在配音的时候无论用的是手机还是录音笔，都是会按照一定的顺序生成文件名的，所以一般已经不会搞乱，我的建议是都把录音都放在一个单独的文件夹里。</p>
 <p>至此就完成了字幕的批量生成，只需用到两个工具，一个是js插件，用来获取讯飞识别出来的文本,一个是 java工具,一步到位生成字幕到指定目录。<br>如果想直接用这两个工具的话,戳这里:<a href="http://pan.baidu.com/s/1slBIYCl"  target="_brank">密码：9o5n</a></p>
 <p>如果想分析源码的话,戳这里:<a href="http://pan.baidu.com/s/1slwPYjj" target="_brank">密码：hsgl</a></p>
@@ -336,16 +336,33 @@
         <div class="reward-container">
   <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
   <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
-    Donate
+    打赏
   </button>
   <div id="qr" style="display: none;">
       
       <div style="display: inline-block;">
-        <img src="/images/wechatpay.jpg" alt="Hank Lau WeChat Pay">
-        <p>WeChat Pay</p>
+        <img src="/images/wechatpay.jpg" alt="var author = 'hank' 微信支付">
+        <p>微信支付</p>
       </div>
 
   </div>
+</div>
+
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>var author = 'hank'
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://yekongle.github.io/2017/11/23/auto-caption-procedure/" title="PR视频字幕批量生成程序(用讯飞听见识别音频)">https://yekongle.github.io/2017/11/23/auto-caption-procedure/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
 </div>
 
 
@@ -416,10 +433,10 @@
 
       <ul class="sidebar-nav motion-element">
         <li class="sidebar-nav-toc">
-          Table of Contents
+          文章目录
         </li>
         <li class="sidebar-nav-overview">
-          Overview
+          站点概览
         </li>
       </ul>
 
@@ -430,10 +447,10 @@
 
       <div class="site-overview-wrap sidebar-panel">
         <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
-    <img class="site-author-image" itemprop="image" alt="Hank Lau"
+    <img class="site-author-image" itemprop="image" alt="var author = 'hank'"
       src="/images/head.png">
-  <p class="site-author-name" itemprop="name">Hank Lau</p>
-  <div class="site-description" itemprop="description">努力，奋斗！</div>
+  <p class="site-author-name" itemprop="name">var author = 'hank'</p>
+  <div class="site-description" itemprop="description">指尖改变世界</div>
 </div>
 <div class="site-state-wrap motion-element">
   <nav class="site-state">
@@ -441,20 +458,20 @@
           <a href="/archives/">
         
           <span class="site-state-item-count">8</span>
-          <span class="site-state-item-name">posts</span>
+          <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
           
         <span class="site-state-item-count">4</span>
-        <span class="site-state-item-name">categories</span></a>
+        <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
         <span class="site-state-item-count">7</span>
-        <span class="site-state-item-name">tags</span></a>
+        <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
 </div>
@@ -464,6 +481,9 @@
       </span>
       <span class="links-of-author-item">
         <a href="mailto:973352916@qq.com" title="E-Mail → mailto:973352916@qq.com" rel="noopener" target="_blank"><i class="envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/atom.xml" title="RSS → &#x2F;atom.xml"><i class="fa fa-rss fa-fw"></i>RSS</a>
       </span>
   </div>
 
@@ -498,9 +518,9 @@
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>
-  <span class="author" itemprop="copyrightHolder">Hank Lau</span>
+  <span class="author" itemprop="copyrightHolder">var author = 'hank'</span>
 </div>
-  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
   </div>
 
         
@@ -510,7 +530,7 @@
       <span class="post-meta-item-icon">
         <i class="fa fa-user"></i>
       </span>
-      <span class="site-uv" title="Total Visitors">
+      <span class="site-uv" title="总访客量">
         <span id="busuanzi_value_site_uv"></span>
       </span>
     </span>
@@ -519,7 +539,7 @@
       <span class="post-meta-item-icon">
         <i class="fa fa-eye"></i>
       </span>
-      <span class="site-pv" title="Total Views">
+      <span class="site-pv" title="总访问量">
         <span id="busuanzi_value_site_pv"></span>
       </span>
     </span>
@@ -607,6 +627,33 @@
   
 
   
+<script src="https://cdn.jsdelivr.net/npm/darkmode-js@1.5.7/lib/darkmode-js.min.js"></script>
+
+<script>
+var options = {
+  bottom: '64px',
+  right: 'unset',
+  left: '32px',
+  time: '0.5s',
+  mixColor: 'transparent',
+  backgroundColor: 'transparent',
+  buttonColorDark: '#100f2c',
+  buttonColorLight: '#fff',
+  saveInCookies: false,
+  label: '🌓',
+  autoMatchOsTheme: false
+}
+const darkmode = new Darkmode(options);
+window.darkmode = darkmode;
+darkmode.showWidget();
+if (window.darkmode && !window.darkmode.isActivated()) {
+  window.darkmode.toggle();
+  var toggleButtons = document.getElementsByClassName("darkmode-toggle");
+  for (i = 0; i < toggleButtons.length; i++) {
+    toggleButtons[i].classList.add("darkmode-toggle--white");
+  }
+}
+</script>
 
 
 <script>
