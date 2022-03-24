@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"yekongle.github.io","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":true,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":"valine","storage":true,"lazyload":true,"nav":null,"activeClass":"valine"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="简介本次同小伙伴们分享使用 Jenkins + Gilab + Maven 来自动化部署一个 Spring Boot 应用，架构图如下：">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Jenkins + Gitlab + Maven 持续集成部署 SpringBoot 应用实践">
+<meta property="og:url" content="https://yekongle.github.io/2020/11/22/jenkins-gitlab-maven-cicd/index.html">
+<meta property="og:site_name" content="Power Atom&#39;s Blog">
+<meta property="og:description" content="简介本次同小伙伴们分享使用 Jenkins + Gilab + Maven 来自动化部署一个 Spring Boot 应用，架构图如下：">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/yekongle/PhotoManager@master/blog/images/devops/practise/jenkins_gitlab_maven_sb/1.jpg">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/yekongle/PhotoManager@master/blog/images/devops/practise/jenkins_gitlab_maven_sb/2.jpg">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/yekongle/PhotoManager@master/blog/images/devops/practise/jenkins_gitlab_maven_sb/3.jpg">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/yekongle/PhotoManager@master/blog/images/devops/practise/jenkins_gitlab_maven_sb/4.jpg">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/yekongle/PhotoManager@master/blog/images/devops/practise/jenkins_gitlab_maven_sb/5.jpg">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/yekongle/PhotoManager@master/blog/images/devops/practise/jenkins_gitlab_maven_sb/6.jpg">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/yekongle/PhotoManager@master/blog/images/devops/practise/jenkins_gitlab_maven_sb/7.jpg">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/yekongle/PhotoManager@master/blog/images/devops/practise/jenkins_gitlab_maven_sb/8.jpg">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/yekongle/PhotoManager@master/blog/images/devops/practise/jenkins_gitlab_maven_sb/9.jpg">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/yekongle/PhotoManager@master/blog/images/devops/practise/jenkins_gitlab_maven_sb/10.jpg">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/yekongle/PhotoManager@master/blog/images/devops/practise/jenkins_gitlab_maven_sb/11.jpg">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/yekongle/PhotoManager@master/blog/images/devops/practise/jenkins_gitlab_maven_sb/12.jpg">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/yekongle/PhotoManager@master/blog/images/devops/practise/jenkins_gitlab_maven_sb/13.jpg">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/yekongle/PhotoManager@master/blog/images/devops/practise/jenkins_gitlab_maven_sb/14.jpg">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/yekongle/PhotoManager@master/blog/images/devops/practise/jenkins_gitlab_maven_sb/15.jpg">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/yekongle/PhotoManager@master/blog/images/devops/practise/jenkins_gitlab_maven_sb/16.jpg">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/yekongle/PhotoManager@master/blog/images/devops/practise/jenkins_gitlab_maven_sb/17.jpg">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/yekongle/PhotoManager@master/blog/images/devops/practise/jenkins_gitlab_maven_sb/18.jpg">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/yekongle/PhotoManager@master/blog/images/devops/practise/jenkins_gitlab_maven_sb/19.jpg">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/yekongle/PhotoManager@master/blog/images/devops/practise/jenkins_gitlab_maven_sb/20.jpg">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/yekongle/PhotoManager@master/blog/images/devops/practise/jenkins_gitlab_maven_sb/21.jpg">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/yekongle/PhotoManager@master/blog/images/devops/practise/jenkins_gitlab_maven_sb/22.jpg">
+<meta property="article:published_time" content="2020-11-22T10:40:00.000Z">
+<meta property="article:modified_time" content="2022-03-24T16:29:57.172Z">
+<meta property="article:author" content="var author &#x3D; &#39;hank&#39;">
+<meta property="article:tag" content="CI">
+<meta property="article:tag" content="CD">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://cdn.jsdelivr.net/gh/yekongle/PhotoManager@master/blog/images/devops/practise/jenkins_gitlab_maven_sb/1.jpg">
+
+<link rel="canonical" href="https://yekongle.github.io/2020/11/22/jenkins-gitlab-maven-cicd/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>Jenkins + Gitlab + Maven 持续集成部署 SpringBoot 应用实践 | Power Atom's Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<link rel="alternate" href="/atom.xml" title="Power Atom's Blog" type="application/atom+xml">
+<style>.darkmode--activated{--body-bg-color:#282828;--content-bg-color:#333;--card-bg-color:#555;--text-color:#ccc;--blockquote-color:#bbb;--link-color:#ccc;--link-hover-color:#eee;--brand-color:#ddd;--brand-hover-color:#ddd;--table-row-odd-bg-color:#282828;--table-row-hover-bg-color:#363636;--menu-item-bg-color:#555;--btn-default-bg:#222;--btn-default-color:#ccc;--btn-default-border-color:#555;--btn-default-hover-bg:#666;--btn-default-hover-color:#ccc;--btn-default-hover-border-color:#666;--highlight-background:#282b2e;--highlight-foreground:#a9b7c6;--highlight-gutter-background:#34393d;--highlight-gutter-foreground:#9ca9b6}.darkmode--activated img{opacity:.75}.darkmode--activated img:hover{opacity:.9}.darkmode--activated code{color:#69dbdc;background:0 0}button.darkmode-toggle{z-index:9999}.darkmode-ignore,img{display:flex!important}</style></head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Power Atom's Blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://yekongle.github.io/2020/11/22/jenkins-gitlab-maven-cicd/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/head.png">
+      <meta itemprop="name" content="var author = 'hank'">
+      <meta itemprop="description" content="指尖改变世界">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Power Atom's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Jenkins + Gitlab + Maven 持续集成部署 SpringBoot 应用实践
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-11-22 18:40:00" itemprop="dateCreated datePublished" datetime="2020-11-22T18:40:00+08:00">2020-11-22</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-03-25 00:29:57" itemprop="dateModified" datetime="2022-03-25T00:29:57+08:00">2022-03-25</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/DevOps/" itemprop="url" rel="index"><span itemprop="name">DevOps</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2020/11/22/jenkins-gitlab-maven-cicd/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2020/11/22/jenkins-gitlab-maven-cicd/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h3 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h3><p>本次同小伙伴们分享使用 Jenkins + Gilab + Maven 来自动化部署一个 Spring Boot 应用，架构图如下：</p>
+<span id="more"></span>
+<p><img data-src="https://cdn.jsdelivr.net/gh/yekongle/PhotoManager@master/blog/images/devops/practise/jenkins_gitlab_maven_sb/1.jpg"></p>
+<p>该 Spring Boot 应用是一个简单的商品后台管理应用，采用了 Spring Security + JWT + MySql, 前端采用了 React 构建，放在 classpath:/resources/static 目录下，商品图片上传到本地目录下通过 nginx 代理访问。后端代码结构如下：<br><img data-src="https://cdn.jsdelivr.net/gh/yekongle/PhotoManager@master/blog/images/devops/practise/jenkins_gitlab_maven_sb/2.jpg"></p>
+<h3 id="环境准备"><a href="#环境准备" class="headerlink" title="环境准备"></a>环境准备</h3><p>本次自动化构建准备环境如下：</p>
+<ul>
+<li>安装 CentOs7 VM1, IP: 192.168.43.206(1 核 2G)</li>
+<li>安装 CentOs7 VM2, IP: 192.168.43.208(1 核 3G)</li>
+<li>安装 JDK1.8(192.168.43.206)</li>
+<li>安装 Git(192.168.43.206)</li>
+<li>安装 Maven(192.168.43.206)</li>
+<li>安装 Mysql(192.168.43.206)</li>
+<li>安装 Jenkins(192.168.43.206)</li>
+<li>安装 Tomcat(192.168.43.206)</li>
+<li>安装 Nginx(192.168.43.206)</li>
+<li>安装 Gitlab-CE(192.168.43.208)</li>
+</ul>
+<p><img data-src="https://cdn.jsdelivr.net/gh/yekongle/PhotoManager@master/blog/images/devops/practise/jenkins_gitlab_maven_sb/3.jpg"></p>
+<p>使用 FinalShell 连接这两台 VM。</p>
+<p><img data-src="https://cdn.jsdelivr.net/gh/yekongle/PhotoManager@master/blog/images/devops/practise/jenkins_gitlab_maven_sb/4.jpg"></p>
+<p>关于具体安装，这些网上都有许多详细的教程，不再具体展开安装说明。</p>
+<h4 id="nginx-配置"><a href="#nginx-配置" class="headerlink" title="nginx 配置"></a>nginx 配置</h4><h5 id="配置-nignx-代理图片路径"><a href="#配置-nignx-代理图片路径" class="headerlink" title="配置 nignx 代理图片路径"></a>配置 nignx 代理图片路径</h5><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">user  root;</span><br><span class="line"></span><br><span class="line"><span class="comment"># 图片映射路径</span></span><br><span class="line">location /image &#123;</span><br><span class="line">    root   /root;</span><br><span class="line">    <span class="comment"># 打开目录索引</span></span><br><span class="line">    autoindex on;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h5 id="nginx-启动关闭"><a href="#nginx-启动关闭" class="headerlink" title="nginx 启动关闭"></a>nginx 启动关闭</h5><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 启动 nginx</span></span><br><span class="line">/usr/local/nginx/sbin/nginx</span><br><span class="line"></span><br><span class="line"><span class="comment"># 停⽌Nginx服务，可执⾏</span></span><br><span class="line">/usr/local/nginx/sbin/nginx -s stop</span><br><span class="line"></span><br><span class="line"><span class="comment"># 如果修改了配置⽂件后想重新加载Nginx，可执⾏：</span></span><br><span class="line">/usr/local/nginx/sbin/nginx -s reload</span><br><span class="line"></span><br><span class="line"><span class="comment"># 注意其配置⽂件位于：</span></span><br><span class="line">/usr/local/nginx/conf/nginx.conf</span><br></pre></td></tr></table></figure>
+
+<h4 id="Tomcat-配置"><a href="#Tomcat-配置" class="headerlink" title="Tomcat 配置"></a>Tomcat 配置</h4><h5 id="配置-Tomcat-用户角色权限"><a href="#配置-Tomcat-用户角色权限" class="headerlink" title="配置 Tomcat 用户角色权限"></a>配置 Tomcat 用户角色权限</h5><p>默认情况下 Tomcat 是没有配置用户角色权限的</p>
+<p>但是后续 Jenkins 部署项目到 Tomcat 服务器，需要用到 Tomcat 的用户，所以修改 tomcat 以下配置， 添加用户及权限</p>
+<p>vim /usr/local/tomcat/apache-tomcat-8.5.55/conf/tomcat-users.xml</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">&lt;tomcat-users&gt;</span><br><span class="line">    &lt;role rolename=<span class="string">&quot;tomcat&quot;</span>/&gt;</span><br><span class="line">    &lt;role rolename=<span class="string">&quot;role1&quot;</span>/&gt;</span><br><span class="line">    &lt;role rolename=<span class="string">&quot;manager-script&quot;</span>/&gt;</span><br><span class="line">    &lt;role rolename=<span class="string">&quot;manager-gui&quot;</span>/&gt;</span><br><span class="line">    &lt;role rolename=<span class="string">&quot;manager-status&quot;</span>/&gt;</span><br><span class="line">    &lt;role rolename=<span class="string">&quot;admin-gui&quot;</span>/&gt;</span><br><span class="line">    &lt;role rolename=<span class="string">&quot;admin-script&quot;</span>/&gt;</span><br><span class="line">    &lt;user username=<span class="string">&quot;hank&quot;</span> password=<span class="string">&quot;hank123&quot;</span> roles=<span class="string">&quot;manager-gui,manager-script,tomcat,admin-gui,admin-script&quot;</span>/&gt;</span><br><span class="line">&lt;/tomcat-users&gt;</span><br></pre></td></tr></table></figure>
+
+<p>注意：为了能够刚才配置的用户登录到 Tomcat，还需要修改以下配置</p>
+<p>vim /usr/local/tomcat/apache-tomcat-8.5.55/webapps/manager/META-INF/context.xml</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&lt;!--</span><br><span class="line"> &lt;Valve className=<span class="string">&quot;org.apache.catalina.valves.RemoteAddrValve&quot;</span></span><br><span class="line">         allow=<span class="string">&quot;127\.\d+\.\d+\.\d+|::1|0:0:0:0:0:0:0:1&quot;</span> /&gt;</span><br><span class="line">--&gt;</span><br></pre></td></tr></table></figure>
+
+<p>把上面这行注释掉即可！</p>
+<h5 id="配置快捷操作和开机启动"><a href="#配置快捷操作和开机启动" class="headerlink" title="配置快捷操作和开机启动"></a>配置快捷操作和开机启动</h5><p>⾸先进⼊ /etc/rc.d/init.d ⽬录，创建⼀个名为 tomcat 的⽂件，并赋予执⾏权限</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> /etc/rc.d/init.d/</span><br><span class="line"></span><br><span class="line"><span class="built_in">touch</span> tomcat</span><br><span class="line"></span><br><span class="line"><span class="built_in">chmod</span> +x tomcat</span><br></pre></td></tr></table></figure>
+
+<p>接下来编辑 tomcat ⽂件，并在其中加⼊如下内容：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># !/bin/bash</span></span><br><span class="line"><span class="comment"># chkconfig:- 20 90</span></span><br><span class="line"><span class="comment"># description:tomcat</span></span><br><span class="line"><span class="comment"># processname:tomcat</span></span><br><span class="line"></span><br><span class="line">JAVA_HOME=/usr/local/java/jdk1.8.0_161</span><br><span class="line"><span class="built_in">export</span> JAVA_HOME</span><br><span class="line">TOMCAT_HOME=/usr/local/tomcat/apache-tomcat-8.5.55</span><br><span class="line"><span class="built_in">export</span> TOMCAT_HOME</span><br><span class="line"></span><br><span class="line"><span class="keyword">case</span> <span class="variable">$1</span> <span class="keyword">in</span></span><br><span class="line">        start) su root <span class="variable">$TOMCAT_HOME</span>/bin/startup.sh;;</span><br><span class="line">        stop) su root <span class="variable">$TOMCAT_HOME</span>/bin/shutdown.sh;;</span><br><span class="line">        restart)</span><br><span class="line">        <span class="variable">$0</span> stop</span><br><span class="line">        <span class="variable">$0</span> start;;</span><br><span class="line">        *) <span class="built_in">echo</span> <span class="string">&quot;Usage: service tomcat start|stop|restart&quot;</span>;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">esac</span></span><br></pre></td></tr></table></figure>
+
+<p>这样后续对于 Tomcat 的开启和关闭只需要执⾏如下命令即可：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">service tomcat start</span><br><span class="line">service tomcat stop</span><br><span class="line">service tomcat restart</span><br></pre></td></tr></table></figure>
+
+<h4 id="启动-Gitlab-CE"><a href="#启动-Gitlab-CE" class="headerlink" title="启动 Gitlab-CE"></a>启动 Gitlab-CE</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gitlab-ctl start</span><br></pre></td></tr></table></figure>
+
+<p>访问登录本地 gitlab：<a target="_blank" rel="noopener" href="http://192.168.43.208/">http://192.168.43.208/</a>, 创建 shop-manager-backend 项目，上传本地代码到该仓库<br><img data-src="https://cdn.jsdelivr.net/gh/yekongle/PhotoManager@master/blog/images/devops/practise/jenkins_gitlab_maven_sb/5.jpg"></p>
+<h4 id="Jenkins-配置"><a href="#Jenkins-配置" class="headerlink" title="Jenkins 配置"></a>Jenkins 配置</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">systemctl start jenkins</span><br></pre></td></tr></table></figure>
+
+<p>启动 Jenkins, 访问登录本地 Jenkins：<br><a target="_blank" rel="noopener" href="http://192.168.43.206:8500/">http://192.168.43.206:8500/</a>, Jenkins 插件通常安装不了，可参考我另一篇博文安装插件, 这里我已经安装好了。</p>
+<p><img data-src="https://cdn.jsdelivr.net/gh/yekongle/PhotoManager@master/blog/images/devops/practise/jenkins_gitlab_maven_sb/6.jpg"></p>
+<h5 id="全局工具配置"><a href="#全局工具配置" class="headerlink" title="全局工具配置"></a>全局工具配置</h5><p>在 Jenkins -&gt; Global Tool Configuration 下， 配置 JDK, Git, 和 Maven</p>
+<p><img data-src="https://cdn.jsdelivr.net/gh/yekongle/PhotoManager@master/blog/images/devops/practise/jenkins_gitlab_maven_sb/7.jpg"></p>
+<h5 id="添加-Jenkins-全局变量"><a href="#添加-Jenkins-全局变量" class="headerlink" title="添加 Jenkins 全局变量"></a>添加 Jenkins 全局变量</h5><p>在 Jenkins -&gt; Configure System 下，添加全局变量</p>
+<p><img data-src="https://cdn.jsdelivr.net/gh/yekongle/PhotoManager@master/blog/images/devops/practise/jenkins_gitlab_maven_sb/8.jpg"></p>
+<h5 id="添加-Gitlab-API-Token"><a href="#添加-Gitlab-API-Token" class="headerlink" title="添加 Gitlab API Token"></a>添加 Gitlab API Token</h5><p>在 Jenkins -&gt; Configure System 下，添加 API Token<br><img data-src="https://cdn.jsdelivr.net/gh/yekongle/PhotoManager@master/blog/images/devops/practise/jenkins_gitlab_maven_sb/9.jpg"></p>
+<h5 id="新建一个自由风格项目"><a href="#新建一个自由风格项目" class="headerlink" title="新建一个自由风格项目"></a>新建一个自由风格项目</h5><p><img data-src="https://cdn.jsdelivr.net/gh/yekongle/PhotoManager@master/blog/images/devops/practise/jenkins_gitlab_maven_sb/10.jpg"></p>
+<h5 id="General"><a href="#General" class="headerlink" title="General"></a>General</h5><p>GitLab Connection: 选择前面添加的 Gitlab API Token<br><img data-src="https://cdn.jsdelivr.net/gh/yekongle/PhotoManager@master/blog/images/devops/practise/jenkins_gitlab_maven_sb/11.jpg"></p>
+<h5 id="源码配置："><a href="#源码配置：" class="headerlink" title="源码配置："></a>源码配置：</h5><p>Repository URL: <a href="mailto:&#103;&#x69;&#116;&#x40;&#x31;&#57;&#50;&#x2e;&#49;&#54;&#x38;&#x2e;&#x34;&#x33;&#46;&#50;&#x30;&#56;">&#103;&#x69;&#116;&#x40;&#x31;&#57;&#50;&#x2e;&#49;&#54;&#x38;&#x2e;&#x34;&#x33;&#46;&#50;&#x30;&#56;</a>:yekongle/shop-manager-backend.git</p>
+<p>Credentials: 配置一个访问 gitlab 的凭据</p>
+<p><img data-src="https://cdn.jsdelivr.net/gh/yekongle/PhotoManager@master/blog/images/devops/practise/jenkins_gitlab_maven_sb/12.jpg"></p>
+<h5 id="构建触发器配置"><a href="#构建触发器配置" class="headerlink" title="构建触发器配置"></a>构建触发器配置</h5><p>主要是要配置一个 webhook，这个 webhook 会触发 jenkins 拉取 gitlab 上的代码<br><img data-src="https://cdn.jsdelivr.net/gh/yekongle/PhotoManager@master/blog/images/devops/practise/jenkins_gitlab_maven_sb/13.jpg"></p>
+<p><img data-src="https://cdn.jsdelivr.net/gh/yekongle/PhotoManager@master/blog/images/devops/practise/jenkins_gitlab_maven_sb/14.jpg"></p>
+<h5 id="构建"><a href="#构建" class="headerlink" title="构建"></a>构建</h5><p>通过 maven 构建项目，写 maven 的构建命令<br><img data-src="https://cdn.jsdelivr.net/gh/yekongle/PhotoManager@master/blog/images/devops/practise/jenkins_gitlab_maven_sb/15.jpg"></p>
+<h5 id="构建后操作"><a href="#构建后操作" class="headerlink" title="构建后操作"></a>构建后操作</h5><p>构建完毕后，将生成的项目 war 包放到 tomcat 容器中运行</p>
+<p>这里的 Credentials 选择事先添加好的访问 Tomcat Web 应用程序管理的账号密码凭据</p>
+<p><img data-src="https://cdn.jsdelivr.net/gh/yekongle/PhotoManager@master/blog/images/devops/practise/jenkins_gitlab_maven_sb/16.jpg"></p>
+<h3 id="部署测试"><a href="#部署测试" class="headerlink" title="部署测试"></a>部署测试</h3><p>当有代码提交到 master 分支时，jenkins 就会重新构建部署该项目<br><img data-src="https://cdn.jsdelivr.net/gh/yekongle/PhotoManager@master/blog/images/devops/practise/jenkins_gitlab_maven_sb/17.jpg"></p>
+<p>查看控制台输出如下，可以看到重新构建的 war 包被部署到了 Tomcat 下：</p>
+<p><img data-src="https://cdn.jsdelivr.net/gh/yekongle/PhotoManager@master/blog/images/devops/practise/jenkins_gitlab_maven_sb/18.jpg"></p>
+<p>进入 Tomcat 应用管理控制台，可看到该应用并且已经启动了<br><img data-src="https://cdn.jsdelivr.net/gh/yekongle/PhotoManager@master/blog/images/devops/practise/jenkins_gitlab_maven_sb/19.jpg"></p>
+<h4 id="访问该项目"><a href="#访问该项目" class="headerlink" title="访问该项目"></a>访问该项目</h4><p><img data-src="https://cdn.jsdelivr.net/gh/yekongle/PhotoManager@master/blog/images/devops/practise/jenkins_gitlab_maven_sb/20.jpg"></p>
+<p>输入账号密码登录</p>
+<p><img data-src="https://cdn.jsdelivr.net/gh/yekongle/PhotoManager@master/blog/images/devops/practise/jenkins_gitlab_maven_sb/21.jpg"></p>
+<p><img data-src="https://cdn.jsdelivr.net/gh/yekongle/PhotoManager@master/blog/images/devops/practise/jenkins_gitlab_maven_sb/22.jpg"></p>
+<p>后端项目代码已上传至 Github: <a target="_blank" rel="noopener" href="https://github.com/yekongle/springboot-code-samples/tree/master/shop-manager-backend">https://github.com/yekongle/springboot-code-samples/tree/master/shop-manager-backend</a> , 希望对小伙伴们有帮助哦。</p>
+<h3 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h3><ul>
+<li>React 前端: <a target="_blank" rel="noopener" href="https://www.bilibili.com/video/BV1eE411W7bb?p=18&amp;t=34">https://www.bilibili.com/video/BV1eE411W7bb?p=18&amp;t=34</a></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+        <div class="reward-container">
+  <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="/images/wechatpay.jpg" alt="var author = 'hank' 微信支付">
+        <p>微信支付</p>
+      </div>
+
+  </div>
+</div>
+
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>var author = 'hank'
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://yekongle.github.io/2020/11/22/jenkins-gitlab-maven-cicd/" title="Jenkins + Gitlab + Maven 持续集成部署 SpringBoot 应用实践">https://yekongle.github.io/2020/11/22/jenkins-gitlab-maven-cicd/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/CI/" rel="tag"># CI</a>
+              <a href="/tags/CD/" rel="tag"># CD</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2020/04/06/jenkins-plugin-installation/" rel="prev" title="Jenkins 插件安装失败解决办法">
+      <i class="fa fa-chevron-left"></i> Jenkins 插件安装失败解决办法
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2020/11/24/jenkins-send-email/" rel="next" title="Jenkins 配置邮箱服务器发送构建结果">
+      Jenkins 配置邮箱服务器发送构建结果 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AE%80%E4%BB%8B"><span class="nav-number">1.</span> <span class="nav-text">简介</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%8E%AF%E5%A2%83%E5%87%86%E5%A4%87"><span class="nav-number">2.</span> <span class="nav-text">环境准备</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#nginx-%E9%85%8D%E7%BD%AE"><span class="nav-number">2.1.</span> <span class="nav-text">nginx 配置</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE-nignx-%E4%BB%A3%E7%90%86%E5%9B%BE%E7%89%87%E8%B7%AF%E5%BE%84"><span class="nav-number">2.1.1.</span> <span class="nav-text">配置 nignx 代理图片路径</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#nginx-%E5%90%AF%E5%8A%A8%E5%85%B3%E9%97%AD"><span class="nav-number">2.1.2.</span> <span class="nav-text">nginx 启动关闭</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Tomcat-%E9%85%8D%E7%BD%AE"><span class="nav-number">2.2.</span> <span class="nav-text">Tomcat 配置</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE-Tomcat-%E7%94%A8%E6%88%B7%E8%A7%92%E8%89%B2%E6%9D%83%E9%99%90"><span class="nav-number">2.2.1.</span> <span class="nav-text">配置 Tomcat 用户角色权限</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE%E5%BF%AB%E6%8D%B7%E6%93%8D%E4%BD%9C%E5%92%8C%E5%BC%80%E6%9C%BA%E5%90%AF%E5%8A%A8"><span class="nav-number">2.2.2.</span> <span class="nav-text">配置快捷操作和开机启动</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%90%AF%E5%8A%A8-Gitlab-CE"><span class="nav-number">2.3.</span> <span class="nav-text">启动 Gitlab-CE</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Jenkins-%E9%85%8D%E7%BD%AE"><span class="nav-number">2.4.</span> <span class="nav-text">Jenkins 配置</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%85%A8%E5%B1%80%E5%B7%A5%E5%85%B7%E9%85%8D%E7%BD%AE"><span class="nav-number">2.4.1.</span> <span class="nav-text">全局工具配置</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%B7%BB%E5%8A%A0-Jenkins-%E5%85%A8%E5%B1%80%E5%8F%98%E9%87%8F"><span class="nav-number">2.4.2.</span> <span class="nav-text">添加 Jenkins 全局变量</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%B7%BB%E5%8A%A0-Gitlab-API-Token"><span class="nav-number">2.4.3.</span> <span class="nav-text">添加 Gitlab API Token</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%96%B0%E5%BB%BA%E4%B8%80%E4%B8%AA%E8%87%AA%E7%94%B1%E9%A3%8E%E6%A0%BC%E9%A1%B9%E7%9B%AE"><span class="nav-number">2.4.4.</span> <span class="nav-text">新建一个自由风格项目</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#General"><span class="nav-number">2.4.5.</span> <span class="nav-text">General</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%BA%90%E7%A0%81%E9%85%8D%E7%BD%AE%EF%BC%9A"><span class="nav-number">2.4.6.</span> <span class="nav-text">源码配置：</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%9E%84%E5%BB%BA%E8%A7%A6%E5%8F%91%E5%99%A8%E9%85%8D%E7%BD%AE"><span class="nav-number">2.4.7.</span> <span class="nav-text">构建触发器配置</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%9E%84%E5%BB%BA"><span class="nav-number">2.4.8.</span> <span class="nav-text">构建</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%9E%84%E5%BB%BA%E5%90%8E%E6%93%8D%E4%BD%9C"><span class="nav-number">2.4.9.</span> <span class="nav-text">构建后操作</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%83%A8%E7%BD%B2%E6%B5%8B%E8%AF%95"><span class="nav-number">3.</span> <span class="nav-text">部署测试</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%AE%BF%E9%97%AE%E8%AF%A5%E9%A1%B9%E7%9B%AE"><span class="nav-number">3.1.</span> <span class="nav-text">访问该项目</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E9%93%BE%E6%8E%A5"><span class="nav-number">4.</span> <span class="nav-text">参考链接</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="var author = 'hank'"
+      src="/images/head.png">
+  <p class="site-author-name" itemprop="name">var author = 'hank'</p>
+  <div class="site-description" itemprop="description">指尖改变世界</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">12</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">5</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">10</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/yekongle" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;yekongle" rel="noopener" target="_blank"><i class="github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:973352916@qq.com" title="E-Mail → mailto:973352916@qq.com" rel="noopener" target="_blank"><i class="envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/atom.xml" title="RSS → &#x2F;atom.xml"><i class="fa fa-rss fa-fw"></i>RSS</a>
+      </span>
+  </div>
+
+
+
+<link rel="stylesheet" href="/css/APlayer.min.css">
+<link rel="stylesheet" href="/css/music.css">
+<div id="player"></div>
+<script src="/js/APlayer.min.js"></script>
+<script src="/js/music.js"></script>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">var author = 'hank'</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+<script src="/js/bookmark.js"></script>
+
+
+
+
+  
+  <script>
+    (function(){
+      var canonicalURL, curProtocol;
+      //Get the <link> tag
+      var x=document.getElementsByTagName("link");
+		//Find the last canonical URL
+		if(x.length > 0){
+			for (i=0;i<x.length;i++){
+				if(x[i].rel.toLowerCase() == 'canonical' && x[i].href){
+					canonicalURL=x[i].href;
+				}
+			}
+		}
+    //Get protocol
+	    if (!canonicalURL){
+	    	curProtocol = window.location.protocol.split(':')[0];
+	    }
+	    else{
+	    	curProtocol = canonicalURL.split(':')[0];
+	    }
+      //Get current URL if the canonical URL does not exist
+	    if (!canonicalURL) canonicalURL = window.location.href;
+	    //Assign script content. Replace current URL with the canonical URL
+      !function(){var e=/([http|https]:\/\/[a-zA-Z0-9\_\.]+\.baidu\.com)/gi,r=canonicalURL,t=document.referrer;if(!e.test(r)){var n=(String(curProtocol).toLowerCase() === 'https')?"https://sp0.baidu.com/9_Q4simg2RQJ8t7jm9iCKT-xh_/s.gif":"//api.share.baidu.com/s.gif";t?(n+="?r="+encodeURIComponent(document.referrer),r&&(n+="&l="+r)):r&&(n+="?l="+r);var i=new Image;i.src=n}}(window);})();
+  </script>
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+<script src="https://cdn.jsdelivr.net/npm/darkmode-js@1.5.7/lib/darkmode-js.min.js"></script>
+
+<script>
+var options = {
+  bottom: '64px',
+  right: 'unset',
+  left: '32px',
+  time: '0.5s',
+  mixColor: 'transparent',
+  backgroundColor: 'transparent',
+  buttonColorDark: '#100f2c',
+  buttonColorLight: '#fff',
+  saveInCookies: false,
+  label: '🌓',
+  autoMatchOsTheme: false
+}
+const darkmode = new Darkmode(options);
+window.darkmode = darkmode;
+darkmode.showWidget();
+if (window.darkmode && !window.darkmode.isActivated()) {
+  window.darkmode.toggle();
+  var toggleButtons = document.getElementsByClassName("darkmode-toggle");
+  for (i = 0; i < toggleButtons.length; i++) {
+    toggleButtons[i].classList.add("darkmode-toggle--white");
+  }
+}
+</script>
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : false,
+      appId      : 'IfTxM4VBuxzrCUyz30iyRwtE-9Nh9j0Va',
+      appKey     : 'U7UzHCn8TtTogVH8lPP3lKl7',
+      placeholder: "ヾﾉ≧∀≦)o来啊，快活啊!",
+      avatar     : 'robohash',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : '' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+     <canvas class="fireworks" style="position: fixed;left: 0;top: 0;z-index: 1; pointer-events: none;" ></canvas>
+     <script type="text/javascript" src="//cdn.bootcss.com/animejs/2.2.0/anime.min.js"></script>
+     <script type="text/javascript" src="/js/fireworks.js"></script>
+</body>
+</html>
