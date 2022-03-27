@@ -2110,4 +2110,197 @@
         <tag>Scheduled</tag>
       </tags>
   </entry>
+  <entry>
+    <title>CentOs7 搭建 K8s 集群实践</title>
+    <url>/2020/11/30/centos7-install-k8s-cluster/</url>
+    <content><![CDATA[<h3 id="Kubernates-简介"><a href="#Kubernates-简介" class="headerlink" title="Kubernates 简介"></a>Kubernates 简介</h3><p>Kubernetes（简称，K8S）是 Google 开源的容器集群管理系统。在容器部署时代，我们知道了容器类似于 VM，但有着更好的隔离属性，与基础架构分离，使得它可以跨云和 OS 分发进行移植。它的应用和其运行环境捆绑在一起，可以进行持续开发，集成和部署，并且因为镜像不可更改可以快速回滚。</p>
+<p>容器镜像比 VM 镜像能够更快地创建，隔离性好，敏捷的应用程序和部署，但是在生产环境中，如果容器较多，如何管理容器的生命周期将会变得棘手，但如果由系统处容器的弹性扩展，故障转移，是不是就极大地解放了运维的成本，这就是使用 Kubernetes 的好处！使用 Kubernetes 有如下好处:</p>
+<span id="more"></span>
+<ul>
+<li>服务发现和负载均衡：如果到容器的流量很高，Kubernetes 可以实现负载平衡并分配网络流量，从而使部署稳定。</li>
+<li>存储编排: 允许自动选择挂载自己的存储系统，比如本地存储，云提供商等。</li>
+<li>自动部署和回滚: 可以使用一定的策略来为您的部署创建新容器，删除现有容器并将其所有资源用于新容器。</li>
+<li>自动装箱: 由于 Kubernetes 提供了一个节点集群，可用于运行容器化任务，通过配置每个容器需要多少 CPU 和内存（RAM）。Kubernetes 可以将容器安装到您的节点上，以充分利用您的资源。</li>
+<li>自我修复: 重启失败的容器，替换容器，杀死不响应用户定义的运行状况检查的容器，并在准备好服务之前不将其通告给客户。</li>
+<li>密钥和配置管理：Kubernetes 使您可以存储和管理敏感信息，例如密码，OAuth 令牌和 SSH 密钥。您可以部署和更新机密和应用程序配置，而无需重建容器映像，也无需在堆栈配置中公开机密。</li>
+</ul>
+<h3 id="安装准备"><a href="#安装准备" class="headerlink" title="安装准备"></a>安装准备</h3><h4 id="节点规划"><a href="#节点规划" class="headerlink" title="节点规划"></a>节点规划</h4><p>在本地创建了 3 个 centos7 VM, 组建一个简单的 K8s 集群，节点规划如下：</p>
+<table>
+<thead>
+<tr>
+<th>主机名</th>
+<th>IP</th>
+<th>⻆⾊</th>
+<th>配置</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>learn-k8s-master</td>
+<td>192.168.43.210</td>
+<td>k8s 主节点</td>
+<td>2 核 3G</td>
+</tr>
+<tr>
+<td>learn-k8s-node1</td>
+<td>192.168.43.211</td>
+<td>k8s 从节点</td>
+<td>1 核 2G</td>
+</tr>
+<tr>
+<td>learn-k8s-node2</td>
+<td>192.168.43.212</td>
+<td>k8s 从节点</td>
+<td>1 核 2G</td>
+</tr>
+</tbody></table>
+<p>各个节点的软件版本：</p>
+<p>操作系统： CentOS-7.4-64Bit</p>
+<p>Docker 版本： 1.13.1</p>
+<p>Kubernetes 版本： v1.19.4</p>
+<p>所有节点都需要安装以下组件：</p>
+<p>Docker ：打包应用以及依赖包到一个轻量级、可移植的容器中<br>kubelet ：运⾏于所有 Node 上，负责启动容器和 Pod<br>kubeadm ：负责初始化集群<br>kubectl ： k8s 命令⾏⼯具，通过其可以部署/管理应⽤ 以及 CRUD 各种资源</p>
+<h4 id="节点配置"><a href="#节点配置" class="headerlink" title="节点配置"></a>节点配置</h4><p>所有节点都要完成下面配置：</p>
+<p>设置所有节点主机名</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">hostnamectl --static set-hostname learn-k8s-master</span><br><span class="line">hostnamectl --static set-hostname learn-k8s-node-1</span><br><span class="line">hostnamectl --static set-hostname learn-k8s-node-2</span><br></pre></td></tr></table></figure>
+
+<p>==所有节点 主机名/IP 加⼊ hosts 解析==</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">192.168.43.210 learn-k8s-master</span><br><span class="line">192.168.43.211 learn-k8s-node-1</span><br><span class="line">192.168.43.212 learn-k8s-node-2</span><br></pre></td></tr></table></figure>
+
+<p>==所有节点关闭防⽕墙==</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">systemctl <span class="built_in">disable</span> firewalld.service</span><br><span class="line">systemctl stop firewalld.service</span><br></pre></td></tr></table></figure>
+
+<p>==禁⽤ SELINUX==</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">vim /etc/sysconfig/selinux</span><br><span class="line"></span><br><span class="line"><span class="comment"># 永久关闭</span></span><br><span class="line">SELINUX=disabled</span><br></pre></td></tr></table></figure>
+
+<p>==设置系统参数==</p>
+<p>设置允许路由转发，不对 bridge 的数据进行处理</p>
+<p>创建/etc/sysctl.d/k8s.conf 文件</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">vim /etc/sysctl.d/k8s.conf</span><br><span class="line"></span><br><span class="line"><span class="comment"># 输入如下内容</span></span><br><span class="line">net.bridge.bridge-nf-call-ip6tables=1</span><br><span class="line">net.bridge.bridge-nf-call-iptables=1</span><br><span class="line">net.ipv4.ip_forward=1</span><br><span class="line">vm.swappiness=0</span><br></pre></td></tr></table></figure>
+
+<p>使修改生效,执行</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sysctl -p /etc/sysctl.d/k8s.conf</span><br></pre></td></tr></table></figure>
+
+<p>==kube-proxy 开启 ipvs 的前置条件==</p>
+<p>由于 ipvs 已经加入到内核主干，所以需要内核模块支持，请确保内核已经加载了相应模块；如不确定，执行以下脚本，以确保内核加载相应模块，否则会出现 failed to load kernel modules: [ip_vs_rr ip_vs_sh ip_vs_wrr] 错误</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cat</span> &gt; /etc/sysconfig/modules/ipvs.modules &lt;&lt;<span class="string">EOF</span></span><br><span class="line"><span class="string">#!/bin/bash</span></span><br><span class="line"><span class="string">modprobe -- ip_vs</span></span><br><span class="line"><span class="string">modprobe -- ip_vs_rr</span></span><br><span class="line"><span class="string">modprobe -- ip_vs_wrr</span></span><br><span class="line"><span class="string">modprobe -- ip_vs_sh</span></span><br><span class="line"><span class="string">modprobe -- nf_conntrack_ipv4</span></span><br><span class="line"><span class="string">EOF</span></span><br><span class="line"><span class="built_in">chmod</span> 755 /etc/sysconfig/modules/ipvs.modules &amp;&amp; bash /etc/sysconfig/modules/ipvs.modules &amp;&amp; lsmod | grep -e ip_vs -e nf_conntrack_ipv4</span><br></pre></td></tr></table></figure>
+
+<p>==所有节点关闭 swap==</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">swapoff -a</span><br></pre></td></tr></table></figure>
+
+<h3 id="组件安装"><a href="#组件安装" class="headerlink" title="组件安装"></a>组件安装</h3><h4 id="Docker-安装"><a href="#Docker-安装" class="headerlink" title="Docker 安装"></a>Docker 安装</h4><p>可参考我另一篇博文</p>
+<h4 id="安装-kubelet、kubeadm、kubectl-所有节点"><a href="#安装-kubelet、kubeadm、kubectl-所有节点" class="headerlink" title="安装 kubelet、kubeadm、kubectl(所有节点)"></a>安装 kubelet、kubeadm、kubectl(所有节点)</h4><ul>
+<li>kubeadm: 用来初始化集群的指令。</li>
+<li>kubelet: 在集群中的每个节点上用来启动 pod 和 container 等。</li>
+<li>kubectl: 用来与集群通信的命令行工具。</li>
+</ul>
+<p>设置 yum 安装源</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cat</span>&gt;&gt;/etc/yum.repos.d/kubrenetes.repo&lt;&lt;<span class="string">EOF</span></span><br><span class="line"><span class="string">[kubernetes]</span></span><br><span class="line"><span class="string">name=Kubernetes Repo</span></span><br><span class="line"><span class="string">baseurl=https://mirrors.aliyun.com/kubernetes/yum/repos/kubernetes-el7-x86_64/</span></span><br><span class="line"><span class="string">enabled=1</span></span><br><span class="line"><span class="string">gpgcheck=0</span></span><br><span class="line"><span class="string">repo_gpgcheck=0</span></span><br><span class="line"><span class="string">gpgkey=https://mirrors.aliyun.com/kubernetes/yum/doc/yum-key.gpg</span></span><br><span class="line"><span class="string">EOF</span></span><br></pre></td></tr></table></figure>
+
+<p>执行命令安装</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 安装</span></span><br><span class="line">yum install -y kubelet kubeadm kubectl</span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看版本</span></span><br><span class="line">kubelet --version</span><br><span class="line"></span><br><span class="line"><span class="comment"># 设置开机启动</span></span><br><span class="line">systemctl <span class="built_in">enable</span> kubelet</span><br></pre></td></tr></table></figure>
+
+<p>这时候先不启动，可能出错</p>
+<h4 id="Master-节点配置"><a href="#Master-节点配置" class="headerlink" title="Master 节点配置"></a>Master 节点配置</h4><h5 id="初始化-k8s-集群"><a href="#初始化-k8s-集群" class="headerlink" title="初始化 k8s 集群"></a>初始化 k8s 集群</h5><p>运行初始化命令<br><img data-src="https://cdn.jsdelivr.net/gh/yekongle/PhotoManager@master/blog/images/devops/k8s/centos7_installation/1.jpg"></p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">kubeadm init --kubernetes-version=v1.19.4 \</span><br><span class="line">--image-repository registry.aliyuncs.com/google_containers \</span><br><span class="line">--apiserver-advertise-address=192.168.43.210 \</span><br><span class="line">--service-cidr=10.1.0.0/16 \</span><br><span class="line">--pod-network-cidr=10.244.0.0/16</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><p>–kubernetes-version : ⽤于指定 k8s 版本</p>
+</li>
+<li><p>–apiserver-advertise-address ：⽤于指定使⽤ Master 的哪个 network<br>interface 进⾏通信，若不指定，则 kubeadm 会⾃动选择具有默认⽹关的 interface</p>
+</li>
+<li><p>–pod-network-cidr ：⽤于指定 Pod 的⽹络范围。该参数使⽤依赖于使⽤的⽹络⽅案，本⽂<br>将使⽤经典的 flannel ⽹络⽅案。</p>
+</li>
+</ul>
+<p>执⾏命令后，控制台给出了如下所示的详细集群初始化过程：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[root@learn-k8s-master ~]<span class="comment"># kubeadm init --kubernetes-version=v1.19.4 \</span></span><br><span class="line">&gt; --image-repository registry.aliyuncs.com/google_containers \</span><br><span class="line">&gt; --apiserver-advertise-address=192.168.43.210 \</span><br><span class="line">&gt; --service-cidr=10.1.0.0/16 \</span><br><span class="line">&gt; --pod-network-cidr=10.244.0.0/16</span><br><span class="line">W1126 09:53:58.544775   19646 configset.go:348] WARNING: kubeadm cannot validate component configs <span class="keyword">for</span> API <span class="built_in">groups</span> [kubelet.config.k8s.io kubeproxy.config.k8s.io]</span><br><span class="line">[init] Using Kubernetes version: v1.19.4</span><br><span class="line">[preflight] Running pre-flight checks</span><br><span class="line">[preflight] Pulling images required <span class="keyword">for</span> setting up a Kubernetes cluster</span><br><span class="line">[preflight] This might take a minute or two, depending on the speed of your internet connection</span><br><span class="line">[preflight] You can also perform this action <span class="keyword">in</span> beforehand using <span class="string">&#x27;kubeadm config images pull&#x27;</span></span><br><span class="line"></span><br><span class="line">[certs] Using certificateDir folder <span class="string">&quot;/etc/kubernetes/pki&quot;</span></span><br><span class="line">[certs] Generating <span class="string">&quot;ca&quot;</span> certificate and key</span><br><span class="line">[certs] Generating <span class="string">&quot;apiserver&quot;</span> certificate and key</span><br><span class="line">[certs] apiserver serving cert is signed <span class="keyword">for</span> DNS names [kubernetes kubernetes.default kubernetes.default.svc kubernetes.default.svc.cluster.local learn-k8s-master] and IPs [10.1.0.1 192.168.43.210]</span><br><span class="line">[certs] Generating <span class="string">&quot;apiserver-kubelet-client&quot;</span> certificate and key</span><br><span class="line">[certs] Generating <span class="string">&quot;front-proxy-ca&quot;</span> certificate and key</span><br><span class="line">[certs] Generating <span class="string">&quot;front-proxy-client&quot;</span> certificate and key</span><br><span class="line">[certs] Generating <span class="string">&quot;etcd/ca&quot;</span> certificate and key</span><br><span class="line">[certs] Generating <span class="string">&quot;etcd/server&quot;</span> certificate and key</span><br><span class="line">[certs] etcd/server serving cert is signed <span class="keyword">for</span> DNS names [learn-k8s-master localhost] and IPs [192.168.43.210 127.0.0.1 ::1]</span><br><span class="line">[certs] Generating <span class="string">&quot;etcd/peer&quot;</span> certificate and key</span><br><span class="line">[certs] etcd/peer serving cert is signed <span class="keyword">for</span> DNS names [learn-k8s-master localhost] and IPs [192.168.43.210 127.0.0.1 ::1]</span><br><span class="line">[certs] Generating <span class="string">&quot;etcd/healthcheck-client&quot;</span> certificate and key</span><br><span class="line">[certs] Generating <span class="string">&quot;apiserver-etcd-client&quot;</span> certificate and key</span><br><span class="line">[certs] Generating <span class="string">&quot;sa&quot;</span> key and public key</span><br><span class="line">[kubeconfig] Using kubeconfig folder <span class="string">&quot;/etc/kubernetes&quot;</span></span><br><span class="line">[kubeconfig] Writing <span class="string">&quot;admin.conf&quot;</span> kubeconfig file</span><br><span class="line">[kubeconfig] Writing <span class="string">&quot;kubelet.conf&quot;</span> kubeconfig file</span><br><span class="line">[kubeconfig] Writing <span class="string">&quot;controller-manager.conf&quot;</span> kubeconfig file</span><br><span class="line">[kubeconfig] Writing <span class="string">&quot;scheduler.conf&quot;</span> kubeconfig file</span><br><span class="line">[kubelet-start] Writing kubelet environment file with flags to file <span class="string">&quot;/var/lib/kubelet/kubeadm-flags.env&quot;</span></span><br><span class="line">[kubelet-start] Writing kubelet configuration to file <span class="string">&quot;/var/lib/kubelet/config.yaml&quot;</span></span><br><span class="line">[kubelet-start] Starting the kubelet</span><br><span class="line">[control-plane] Using manifest folder <span class="string">&quot;/etc/kubernetes/manifests&quot;</span></span><br><span class="line">[control-plane] Creating static Pod manifest <span class="keyword">for</span> <span class="string">&quot;kube-apiserver&quot;</span></span><br><span class="line">[control-plane] Creating static Pod manifest <span class="keyword">for</span> <span class="string">&quot;kube-controller-manager&quot;</span></span><br><span class="line">[control-plane] Creating static Pod manifest <span class="keyword">for</span> <span class="string">&quot;kube-scheduler&quot;</span></span><br><span class="line">[etcd] Creating static Pod manifest <span class="keyword">for</span> <span class="built_in">local</span> etcd <span class="keyword">in</span> <span class="string">&quot;/etc/kubernetes/manifests&quot;</span></span><br><span class="line">[wait-control-plane] Waiting <span class="keyword">for</span> the kubelet to boot up the control plane as static Pods from directory <span class="string">&quot;/etc/kubernetes/manifests&quot;</span>. This can take up to 4m0s</span><br><span class="line">[apiclient] All control plane components are healthy after 19.003611 seconds</span><br><span class="line">[upload-config] Storing the configuration used <span class="keyword">in</span> ConfigMap <span class="string">&quot;kubeadm-config&quot;</span> <span class="keyword">in</span> the <span class="string">&quot;kube-system&quot;</span> Namespace</span><br><span class="line">[kubelet] Creating a ConfigMap <span class="string">&quot;kubelet-config-1.19&quot;</span> <span class="keyword">in</span> namespace kube-system with the configuration <span class="keyword">for</span> the kubelets <span class="keyword">in</span> the cluster</span><br><span class="line">[upload-certs] Skipping phase. Please see --upload-certs</span><br><span class="line">[mark-control-plane] Marking the node learn-k8s-master as control-plane by adding the label <span class="string">&quot;node-role.kubernetes.io/master=&#x27;&#x27;&quot;</span></span><br><span class="line">[mark-control-plane] Marking the node learn-k8s-master as control-plane by adding the taints [node-role.kubernetes.io/master:NoSchedule]</span><br><span class="line">[bootstrap-token] Using token: ev6351.4vdcer0778qg6zk7</span><br><span class="line">[bootstrap-token] Configuring bootstrap tokens, cluster-info ConfigMap, RBAC Roles</span><br><span class="line">[bootstrap-token] configured RBAC rules to allow Node Bootstrap tokens to get nodes</span><br><span class="line">[bootstrap-token] configured RBAC rules to allow Node Bootstrap tokens to post CSRs <span class="keyword">in</span> order <span class="keyword">for</span> nodes to get long term certificate credentials</span><br><span class="line">[bootstrap-token] configured RBAC rules to allow the csrapprover controller automatically approve CSRs from a Node Bootstrap Token</span><br><span class="line">[bootstrap-token] configured RBAC rules to allow certificate rotation <span class="keyword">for</span> all node client certificates <span class="keyword">in</span> the cluster</span><br><span class="line">[bootstrap-token] Creating the <span class="string">&quot;cluster-info&quot;</span> ConfigMap <span class="keyword">in</span> the <span class="string">&quot;kube-public&quot;</span> namespace</span><br><span class="line">[kubelet-finalize] Updating <span class="string">&quot;/etc/kubernetes/kubelet.conf&quot;</span> to point to a rotatable kubelet client certificate and key</span><br><span class="line">[addons] Applied essential addon: CoreDNS</span><br><span class="line">[addons] Applied essential addon: kube-proxy</span><br><span class="line"></span><br><span class="line">Your Kubernetes control-plane has initialized successfully!</span><br><span class="line"></span><br><span class="line">To start using your cluster, you need to run the following as a regular user:</span><br><span class="line"></span><br><span class="line">  <span class="built_in">mkdir</span> -p <span class="variable">$HOME</span>/.kube</span><br><span class="line">  sudo <span class="built_in">cp</span> -i /etc/kubernetes/admin.conf <span class="variable">$HOME</span>/.kube/config</span><br><span class="line">  sudo <span class="built_in">chown</span> $(<span class="built_in">id</span> -u):$(<span class="built_in">id</span> -g) <span class="variable">$HOME</span>/.kube/config</span><br><span class="line"></span><br><span class="line">You should now deploy a pod network to the cluster.</span><br><span class="line">Run <span class="string">&quot;kubectl apply -f [podnetwork].yaml&quot;</span> with one of the options listed at:</span><br><span class="line">  https://kubernetes.io/docs/concepts/cluster-administration/addons/</span><br><span class="line"></span><br><span class="line">Then you can <span class="built_in">join</span> any number of worker nodes by running the following on each as root:</span><br><span class="line"></span><br><span class="line">kubeadm <span class="built_in">join</span> 192.168.43.210:6443 --token ev6351.4vdcer0778qg6zk7 \</span><br><span class="line">    --discovery-token-ca-cert-hash sha256:d2575d72454c6db6ff8c06d51aac7591dce912a3edeab658e48b7af7b52ef85e</span><br><span class="line">[root@learn-k8s-master ~]<span class="comment">#</span></span><br></pre></td></tr></table></figure>
+
+<p>在最后会提示节点安装的命令，需要记下来这个, 后面在 slave 节点用到<br><img data-src="https://cdn.jsdelivr.net/gh/yekongle/PhotoManager@master/blog/images/devops/k8s/centos7_installation/2.jpg"></p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">kubeadm <span class="built_in">join</span> 192.168.43.210:6443 --token ev6351.4vdcer0778qg6zk7 \</span><br><span class="line">    --discovery-token-ca-cert-hash sha256:d2575d72454c6db6ff8c06d51aac7591dce912a3edeab658e48b7af7b52ef85e</span><br></pre></td></tr></table></figure>
+
+<p>这时候启动 kubelet</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">systemctl restart kubelet</span><br></pre></td></tr></table></figure>
+
+<p><img data-src="https://cdn.jsdelivr.net/gh/yekongle/PhotoManager@master/blog/images/devops/k8s/centos7_installation/3.jpg"></p>
+<h5 id="配置-kubectl-工具"><a href="#配置-kubectl-工具" class="headerlink" title="配置 kubectl 工具"></a>配置 kubectl 工具</h5><p>在 Master 节点上⽤ root ⽤户执⾏下列命令来配置 kubectl:</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">echo</span> <span class="string">&quot;export KUBECONFIG=/etc/kubernetes/admin.conf&quot;</span> &gt;&gt; /etc/profile</span><br><span class="line"><span class="built_in">source</span> /etc/profile</span><br><span class="line"><span class="built_in">echo</span> <span class="variable">$KUBECONFIG</span></span><br></pre></td></tr></table></figure>
+
+<h5 id="安装-Pod-⽹络"><a href="#安装-Pod-⽹络" class="headerlink" title="安装 Pod ⽹络"></a>安装 Pod ⽹络</h5><p>安装 Pod ⽹络是 Pod 之间进⾏通信的必要条件，k8s ⽀持众多⽹络⽅案，常用有 flannel 和 Calico</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">mkdir</span> k8s</span><br><span class="line"><span class="built_in">cd</span> k8s</span><br><span class="line"></span><br><span class="line">wget https://docs.projectcalico.org/v3.10/getting-started/kubernetes/installation/hosted/kubernetes-datastore/calico-networking/1.7/calico.yaml</span><br><span class="line"></span><br><span class="line">sed -i <span class="string">&#x27;s/192.168.0.0/10.244.0.0/g&#x27;</span> calico.yaml</span><br><span class="line"></span><br><span class="line">kubectl apply -f calico.yaml</span><br></pre></td></tr></table></figure>
+
+<p>看到有个 warning</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">Warning: apiextensions.k8s.io/v1beta1 CustomResourceDefinition is deprecated <span class="keyword">in</span> v1.16+, unavailable <span class="keyword">in</span> v1.22+; use apiextensions.k8s.io/v1 CustomResourceDefinition</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>在 Kubenetes v1.9 中，添加了一个新特性，允许 Kubernetes API 服务器向 API 客户机发送警告。对于已经弃用的 API 发出警告</p>
+<p>查看所有 Pod 的状态</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">kubectl get pods --all-namespaces -o wide</span><br></pre></td></tr></table></figure>
+
+<p><img data-src="https://cdn.jsdelivr.net/gh/yekongle/PhotoManager@master/blog/images/devops/k8s/centos7_installation/4.jpg"></p>
+<h4 id="Slave-节点配置"><a href="#Slave-节点配置" class="headerlink" title="Slave 节点配置"></a>Slave 节点配置</h4><h5 id="让-Slave-节点加入集群"><a href="#让-Slave-节点加入集群" class="headerlink" title="让 Slave 节点加入集群"></a>让 Slave 节点加入集群</h5><p>使用前面 master 节点产生的命令加入 k8s 集群：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[root@learn-k8s-node-1 ~]<span class="comment"># kubeadm join 192.168.43.210:6443 --token ev6351.4vdcer0778qg6zk7 \</span></span><br><span class="line">&gt;     --discovery-token-ca-cert-hash sha256:d2575d72454c6db6ff8c06d51aac7591dce912a3edeab658e48b7af7b52ef85e</span><br><span class="line">[preflight] Running pre-flight checks</span><br><span class="line">[preflight] Reading configuration from the cluster...</span><br><span class="line">[preflight] FYI: You can look at this config file with <span class="string">&#x27;kubectl -n kube-system get cm kubeadm-config -oyaml&#x27;</span></span><br><span class="line">[kubelet-start] Writing kubelet configuration to file <span class="string">&quot;/var/lib/kubelet/config.yaml&quot;</span></span><br><span class="line">[kubelet-start] Writing kubelet environment file with flags to file <span class="string">&quot;/var/lib/kubelet/kubeadm-flags.env&quot;</span></span><br><span class="line">[kubelet-start] Starting the kubelet</span><br><span class="line">[kubelet-start] Waiting <span class="keyword">for</span> the kubelet to perform the TLS Bootstrap...</span><br><span class="line"></span><br><span class="line">This node has joined the cluster:</span><br><span class="line">* Certificate signing request was sent to apiserver and a response was received.</span><br><span class="line">* The Kubelet was informed of the new secure connection details.</span><br><span class="line"></span><br><span class="line">Run <span class="string">&#x27;kubectl get nodes&#x27;</span> on the control-plane to see this node <span class="built_in">join</span> the cluster.</span><br></pre></td></tr></table></figure>
+
+<p><img data-src="https://cdn.jsdelivr.net/gh/yekongle/PhotoManager@master/blog/images/devops/k8s/centos7_installation/5.jpg"></p>
+<h5 id="启动-kubelet"><a href="#启动-kubelet" class="headerlink" title="启动 kubelet"></a>启动 kubelet</h5><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">systemctl <span class="built_in">enable</span> kubelet &amp;&amp; systemctl start kubelet</span><br></pre></td></tr></table></figure>
+
+<p>查看 kubelet 状态发现有 error</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">systemctl status kubelet</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">Failed to get system container stats <span class="keyword">for</span> <span class="string">&quot;/system.slice/kubelet.service&quot;</span>: failed to get cgroup stats <span class="keyword">for</span> <span class="string">&quot;/system.slice/kubelet.service&quot;</span>:</span><br></pre></td></tr></table></figure>
+
+<p>原因是 kubernetes 和 docker 版本兼容性问题<br>vim 编辑 /var/lib/kubelet/kubeadm-flags.env 文件</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">vim /var/lib/kubelet/kubeadm-flags.env</span><br><span class="line"></span><br><span class="line"><span class="comment"># 加入下面这参数</span></span><br><span class="line">--runtime-cgroups=/systemd/system.slice --kubelet-cgroups=/systemd/system.slice</span><br></pre></td></tr></table></figure>
+
+<p><img data-src="https://cdn.jsdelivr.net/gh/yekongle/PhotoManager@master/blog/images/devops/k8s/centos7_installation/6.jpg"></p>
+<p>重新启动后正常</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">systemctl daemon-reload</span><br><span class="line">systemctl restart kubelet</span><br></pre></td></tr></table></figure>
+
+<p><img data-src="https://cdn.jsdelivr.net/gh/yekongle/PhotoManager@master/blog/images/devops/k8s/centos7_installation/7.jpg"></p>
+<h3 id="效果验证"><a href="#效果验证" class="headerlink" title="效果验证"></a>效果验证</h3><p>查看节点状态</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">kubectl get nodes</span><br></pre></td></tr></table></figure>
+
+<p><img data-src="https://cdn.jsdelivr.net/gh/yekongle/PhotoManager@master/blog/images/devops/k8s/centos7_installation/8.jpg"></p>
+<h3 id="安装-DASHBOARD"><a href="#安装-DASHBOARD" class="headerlink" title="安装 DASHBOARD"></a>安装 DASHBOARD</h3><h4 id="应用官方的-DashBoard-模板"><a href="#应用官方的-DashBoard-模板" class="headerlink" title="应用官方的 DashBoard 模板"></a>应用官方的 DashBoard 模板</h4><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">wget https://raw.githubusercontent.com/kubernetes/dashboard/v2.0.0/aio/deploy/recommended.yaml</span><br></pre></td></tr></table></figure>
+
+<p><img data-src="https://cdn.jsdelivr.net/gh/yekongle/PhotoManager@master/blog/images/devops/k8s/centos7_installation/9.jpg"></p>
+<p>连接不上 raw.githubusercontent.com, 访问 <a href="https://site.ip138.com/raw.githubusercontent.com/">https://site.ip138.com/raw.githubusercontent.com/</a> 查看可用的 ip， 然后设置 hosts</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">vim /etc/hosts</span><br><span class="line"></span><br><span class="line">151.101.76.133 raw.githubusercontent.com</span><br></pre></td></tr></table></figure>
+
+<p>再次下载成功, 编辑 recommended.yaml</p>
+<p>修改 DashBoard 的 Service 端口暴露模式为 NodePort</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">kind: Service</span><br><span class="line">apiVersion: v1</span><br><span class="line">metadata:</span><br><span class="line">  labels:</span><br><span class="line">    k8s-app: kubernetes-dashboard</span><br><span class="line">  name: kubernetes-dashboard</span><br><span class="line">  namespace: kubernetes-dashboard</span><br><span class="line">spec:</span><br><span class="line">  <span class="built_in">type</span>: NodePort</span><br><span class="line">  ports:</span><br><span class="line">    - port: 443</span><br><span class="line">      targetPort: 8443</span><br><span class="line">      nodePort: 30001</span><br><span class="line">  selector:</span><br><span class="line">    k8s-app: kubernetes-dashboard</span><br></pre></td></tr></table></figure>
+
+<p>创建 dashboard 资源</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">kubectl create -f recommended.yaml</span><br></pre></td></tr></table></figure>
+
+<p>稍等一会就可以看到 kubernetesui/metrics-scraper 和 kubernetesui/dashboard 的 pod 和 deployment 都处于 ready 状态。<br><img data-src="https://cdn.jsdelivr.net/gh/yekongle/PhotoManager@master/blog/images/devops/k8s/centos7_installation/10.jpg"></p>
+<ul>
+<li>kubernetesui/metrics-scraper</li>
+<li>kubernetesui/dashboard</li>
+</ul>
+<p>如果发现上面这两个镜像无法正常拉取，则先拉取下来再重新打 tag</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker pull registry.cn-hangzhou.aliyuncs.com/ccgg/metrics-scraper:v1.0.4</span><br><span class="line">docker pull registry.cn-hangzhou.aliyuncs.com/ccgg/dashboard:v2.0.4</span><br><span class="line"></span><br><span class="line">docker tag registry.cn-hangzhou.aliyuncs.com/ccgg/metrics-scraper:v1.0.4 kubernetesui/metrics-scraper:v1.0.4</span><br><span class="line">docker tag registry.cn-hangzhou.aliyuncs.com/ccgg/dashboard:v2.0.0 kubernetesui/dashboard:v2.0.0</span><br></pre></td></tr></table></figure>
+
+<p>然后重新行：kubectl apply -f recommended.yaml</p>
+<h4 id="建-Service-Account-及-ClusterRoleBinding"><a href="#建-Service-Account-及-ClusterRoleBinding" class="headerlink" title="建 Service Account 及 ClusterRoleBinding"></a>建 Service Account 及 ClusterRoleBinding</h4><p>编辑 auth.yaml 加入如下内容：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">apiVersion: v1</span><br><span class="line">kind: ServiceAccount</span><br><span class="line">metadata:</span><br><span class="line">  name: admin-user</span><br><span class="line">  namespace: kubernetes-dashboard</span><br><span class="line">---</span><br><span class="line">apiVersion: rbac.authorization.k8s.io/v1</span><br><span class="line">kind: ClusterRoleBinding</span><br><span class="line">metadata:</span><br><span class="line">  name: admin-user</span><br><span class="line">roleRef:</span><br><span class="line">  apiGroup: rbac.authorization.k8s.io</span><br><span class="line">  kind: ClusterRole</span><br><span class="line">  name: cluster-admin</span><br><span class="line">subjects:</span><br><span class="line">- kind: ServiceAccount</span><br><span class="line">  name: admin-user</span><br><span class="line">  namespace: kubernetes-dashboard</span><br></pre></td></tr></table></figure>
+
+<p>运行 kubectl apply -f auth.yaml</p>
+<p><img data-src="https://cdn.jsdelivr.net/gh/yekongle/PhotoManager@master/blog/images/devops/k8s/centos7_installation/11.jpg"></p>
+<h4 id="获取登录-Kubernetes-Dashboard-的-Token"><a href="#获取登录-Kubernetes-Dashboard-的-Token" class="headerlink" title="获取登录 Kubernetes Dashboard 的 Token"></a>获取登录 Kubernetes Dashboard 的 Token</h4><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">kubectl -n kubernetes-dashboard describe secret $(kubectl -n kubernetes-dashboard get secret | grep admin-user | awk <span class="string">&#x27;&#123;print $1&#125;&#x27;</span>)</span><br></pre></td></tr></table></figure>
+
+<h4 id="登录-Kubernetes-Dashboard"><a href="#登录-Kubernetes-Dashboard" class="headerlink" title="登录 Kubernetes Dashboard"></a>登录 Kubernetes Dashboard</h4><p><img data-src="https://cdn.jsdelivr.net/gh/yekongle/PhotoManager@master/blog/images/devops/k8s/centos7_installation/12.jpg"></p>
+<p>打开浏览器，输⼊ token 登录集群管理⻚⾯：</p>
+<p><img data-src="https://cdn.jsdelivr.net/gh/yekongle/PhotoManager@master/blog/images/devops/k8s/centos7_installation/13.jpg"></p>
+<p>登录成功，可以看到 k8s 集群资源的运行情况<br><img data-src="https://cdn.jsdelivr.net/gh/yekongle/PhotoManager@master/blog/images/devops/k8s/centos7_installation/14.jpg"></p>
+<h3 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h3><ul>
+<li><a href="https://kubernetes.io/docs/concepts/overview/what-is-kubernetes/">https://kubernetes.io/docs/concepts/overview/what-is-kubernetes/</a></li>
+<li><a href="https://github.com/hansonwang99/JavaCollection">https://github.com/hansonwang99/JavaCollection</a></li>
+<li><a href="https://developer.aliyun.com/article/745086">https://developer.aliyun.com/article/745086</a></li>
+<li><a href="https://www.bilibili.com/video/BV1kJ411p7mV?p=15&amp;t=94">https://www.bilibili.com/video/BV1kJ411p7mV?p=15&amp;t=94</a></li>
+</ul>
+]]></content>
+      <categories>
+        <category>DevOps</category>
+      </categories>
+      <tags>
+        <tag>K8s</tag>
+      </tags>
+  </entry>
 </search>
