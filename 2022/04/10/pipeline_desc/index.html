@@ -1,0 +1,706 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"yekongle.github.io","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":true,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":"valine","storage":true,"lazyload":true,"nav":null,"activeClass":"valine"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="什么是 Pipeline在进一步讨论 Pipeline 两种语法模型的区别前先来了解下什么是 pipeline，为什么要到它。 Pipeline 是 Jenkins 中的一套自动化流程框架，代表一系列工作流或活动流，作用是允许将单个Jenkins节点或者多个节点的任务组合连接起来，从而实现单个任务难以完成的复杂构建工作。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Pipeline 声明式和脚本式的主要区别">
+<meta property="og:url" content="https://yekongle.github.io/2022/04/10/pipeline_desc/index.html">
+<meta property="og:site_name" content="Power Atom&#39;s Blog">
+<meta property="og:description" content="什么是 Pipeline在进一步讨论 Pipeline 两种语法模型的区别前先来了解下什么是 pipeline，为什么要到它。 Pipeline 是 Jenkins 中的一套自动化流程框架，代表一系列工作流或活动流，作用是允许将单个Jenkins节点或者多个节点的任务组合连接起来，从而实现单个任务难以完成的复杂构建工作。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/yekongle/PhotoManager@master/blog/images/devops/jenkins/pipeline_desc/1.png">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/yekongle/PhotoManager@master/blog/images/devops/jenkins/pipeline_desc/2.png">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/yekongle/PhotoManager@master/blog/images/devops/jenkins/pipeline_desc/3.png">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/yekongle/PhotoManager@master/blog/images/devops/jenkins/pipeline_desc/4.png">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/yekongle/PhotoManager@master/blog/images/devops/jenkins/pipeline_desc/5.png">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/yekongle/PhotoManager@master/blog/images/devops/jenkins/pipeline_desc/6.png">
+<meta property="article:published_time" content="2022-04-10T09:15:03.000Z">
+<meta property="article:modified_time" content="2022-04-10T09:22:21.404Z">
+<meta property="article:author" content="var author &#x3D; &#39;hank&#39;">
+<meta property="article:tag" content="Jenkins">
+<meta property="article:tag" content="Pipeline">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://cdn.jsdelivr.net/gh/yekongle/PhotoManager@master/blog/images/devops/jenkins/pipeline_desc/1.png">
+
+<link rel="canonical" href="https://yekongle.github.io/2022/04/10/pipeline_desc/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>Pipeline 声明式和脚本式的主要区别 | Power Atom's Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<style>.darkmode--activated{--body-bg-color:#282828;--content-bg-color:#333;--card-bg-color:#555;--text-color:#ccc;--blockquote-color:#bbb;--link-color:#ccc;--link-hover-color:#eee;--brand-color:#ddd;--brand-hover-color:#ddd;--table-row-odd-bg-color:#282828;--table-row-hover-bg-color:#363636;--menu-item-bg-color:#555;--btn-default-bg:#222;--btn-default-color:#ccc;--btn-default-border-color:#555;--btn-default-hover-bg:#666;--btn-default-hover-color:#ccc;--btn-default-hover-border-color:#666;--highlight-background:#282b2e;--highlight-foreground:#a9b7c6;--highlight-gutter-background:#34393d;--highlight-gutter-foreground:#9ca9b6}.darkmode--activated img{opacity:.75}.darkmode--activated img:hover{opacity:.9}.darkmode--activated code{color:#69dbdc;background:0 0}button.darkmode-toggle{z-index:9999}.darkmode-ignore,img{display:flex!important}</style><link rel="alternate" href="/atom.xml" title="Power Atom's Blog" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Power Atom's Blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://yekongle.github.io/2022/04/10/pipeline_desc/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/head.png">
+      <meta itemprop="name" content="var author = 'hank'">
+      <meta itemprop="description" content="指尖改变世界">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Power Atom's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Pipeline 声明式和脚本式的主要区别
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2022-04-10 17:15:03 / 修改时间：17:22:21" itemprop="dateCreated datePublished" datetime="2022-04-10T17:15:03+08:00">2022-04-10</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/DevOps/" itemprop="url" rel="index"><span itemprop="name">DevOps</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2022/04/10/pipeline_desc/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2022/04/10/pipeline_desc/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h3 id="什么是-Pipeline"><a href="#什么是-Pipeline" class="headerlink" title="什么是 Pipeline"></a>什么是 Pipeline</h3><p>在进一步讨论 Pipeline 两种语法模型的区别前先来了解下什么是 pipeline，为什么要到它。</p>
+<p>Pipeline 是 Jenkins 中的一套自动化流程框架，代表一系列工作流或活动流，作用是允许将单个Jenkins节点或者多个节点的任务组合连接起来，从而实现单个任务难以完成的复杂构建工作。</p>
+<span id="more"></span>
+<p>它有以下优点：</p>
+<ul>
+<li>Code(代码): Pipeline 的任务是通过代码来实现的，可以通过git来进行版本化控制，团队成员可以编辑迭代Pipeline 代码</li>
+<li>Durable(持久化): 无论 Jenkins master 是在计划内或者非计划内重启，pipeline 任务都不会收到影响</li>
+<li>Pausable(可暂定性) pipeline基于groovy可以实现job的暂停和等待用户的输入或批准然后继续执行。</li>
+<li>Versatile(多功能) 支持fork/join、循环执行，并行执行任务</li>
+<li>Extensible(可扩展性) 支持其DSL的自定义扩展 ，以及与其他插件集成的多个选项</li>
+</ul>
+<h3 id="Pipeline-语法"><a href="#Pipeline-语法" class="headerlink" title="Pipeline 语法"></a>Pipeline 语法</h3><p>Pipeline 包括声明式语法和脚本式语法</p>
+<h4 id="声明式"><a href="#声明式" class="headerlink" title="声明式"></a>声明式</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">pipeline &#123;</span><br><span class="line">    agent any // </span><br><span class="line">    stages &#123;</span><br><span class="line">        stage(<span class="string">&#x27;Build&#x27;</span>) &#123; </span><br><span class="line">            steps &#123;</span><br><span class="line">                // </span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        stage(<span class="string">&#x27;Test&#x27;</span>) &#123; </span><br><span class="line">            steps &#123;</span><br><span class="line">                // </span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        stage(<span class="string">&#x27;Deploy&#x27;</span>) &#123; </span><br><span class="line">            steps &#123;</span><br><span class="line">                // </span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>agent any: 任意可用的agent都可以执行</li>
+<li>stages：代表整个流水线的所有执行阶段。通常stages只有1个，里面包含多个stage</li>
+<li>stage：代表流水线中的某个阶段，可能出现n个。一般分为拉取代码，编译构建，部署等阶段。</li>
+<li>steps：代表一个阶段内需要执行的逻辑。steps里面是shell脚本，git拉取代码，ssh远程发布等任意内容。</li>
+</ul>
+<h4 id="脚本式"><a href="#脚本式" class="headerlink" title="脚本式"></a>脚本式</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">node &#123;  </span><br><span class="line">    stage(<span class="string">&#x27;Build&#x27;</span>) &#123; </span><br><span class="line">        // </span><br><span class="line">    &#125;</span><br><span class="line">    stage(<span class="string">&#x27;Test&#x27;</span>) &#123; </span><br><span class="line">        // </span><br><span class="line">    &#125;</span><br><span class="line">    stage(<span class="string">&#x27;Deploy&#x27;</span>) &#123; </span><br><span class="line">        // </span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>node：节点，一个 Node 就是一个 Jenkins 节点，Master 或者 Agent，是执行 Step 的具体运行环境</li>
+<li>Stage：阶段，一个 Pipeline 可以划分为若干个 Stage，每个 Stage 代表一组操作，比如：Build、Test、Deploy，Stage 是一个逻辑分组的概念。</li>
+</ul>
+<h3 id="声明式和脚本式的主要区别"><a href="#声明式和脚本式的主要区别" class="headerlink" title="声明式和脚本式的主要区别"></a>声明式和脚本式的主要区别</h3><h4 id="1-Pipeline-代码校验"><a href="#1-Pipeline-代码校验" class="headerlink" title="1. Pipeline 代码校验"></a>1. Pipeline 代码校验</h4><p>声明式 Pipeline 会在执行前就会校验 Pipeline 语法是否正确，而脚本式不会。</p>
+<p>观察下面声明式例子，stage Test 里面的 ‘echo 1’ 有语法错误，echo 只可以接受字符串，尝试执行该 pipeline时，会立即报错</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">pipeline &#123;</span><br><span class="line">    agent any</span><br><span class="line"></span><br><span class="line">    stages &#123;</span><br><span class="line">        stage(<span class="string">&quot;Build&quot;</span>) &#123;</span><br><span class="line">            steps &#123;</span><br><span class="line">                echo <span class="string">&quot;Some code compilation here...&quot;</span></span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        stage(<span class="string">&quot;Test&quot;</span>) &#123;</span><br><span class="line">            steps &#123;</span><br><span class="line">                echo <span class="string">&quot;Some tests execution here...&quot;</span></span><br><span class="line">                echo <span class="number">1</span></span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><img data-src="https://cdn.jsdelivr.net/gh/yekongle/PhotoManager@master/blog/images/devops/jenkins/pipeline_desc/1.png"></p>
+<p>同样脚本式的例子如下，会直到执行到 stage Test 才会报错</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">node &#123;</span><br><span class="line">    stage(<span class="string">&quot;Build&quot;</span>) &#123;</span><br><span class="line">        echo <span class="string">&quot;Some code compilation here...&quot;</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    stage(<span class="string">&quot;Test&quot;</span>) &#123;</span><br><span class="line">        echo <span class="string">&quot;Some tests execution here...&quot;</span></span><br><span class="line">        echo <span class="number">1</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><img data-src="https://cdn.jsdelivr.net/gh/yekongle/PhotoManager@master/blog/images/devops/jenkins/pipeline_desc/2.png"></p>
+<p>想象一下如果有多个 stage，前面的stage 执行都没有问题而最后一个stage 出问题，这将会浪费一定的时间</p>
+<h4 id="2-重启-stage"><a href="#2-重启-stage" class="headerlink" title="2. 重启 stage"></a>2. 重启 stage</h4><p>如果某个 stage 执行失败，修复后声明式 Pipeline 可以直接跳到该 stage 重新执行，而脚本式要从头来过。</p>
+<p>观察下面两个图，声明式可以 restart stage，脚本式不能<br><img data-src="https://cdn.jsdelivr.net/gh/yekongle/PhotoManager@master/blog/images/devops/jenkins/pipeline_desc/3.png"></p>
+<p><img data-src="https://cdn.jsdelivr.net/gh/yekongle/PhotoManager@master/blog/images/devops/jenkins/pipeline_desc/4.png"></p>
+<h4 id="3-Option-指令"><a href="#3-Option-指令" class="headerlink" title="3. Option 指令"></a>3. Option 指令</h4><p>option指令用于配置整个jenkins pipeline本身的选项，根据具体的选项不同，可以将其放在pipeline块或者stage块中。</p>
+<p>虽然声明式pipeline 和脚本式 pipeline 都支持 options 选项，但声明式 options 和 pipeline 代码逻辑是分开的，而脚本式 options 和代码逻辑是嵌套在一起的，如果有多个options需要设置代码可读性差。观察下面例子：</p>
+<p><strong>声明式</strong></p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line">pipeline &#123;</span><br><span class="line">    agent any</span><br><span class="line"></span><br><span class="line">    options &#123;</span><br><span class="line">        timestamps()</span><br><span class="line">        ansiColor(<span class="string">&quot;xterm&quot;</span>)</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    stages &#123;</span><br><span class="line">        stage(<span class="string">&quot;Build&quot;</span>) &#123;</span><br><span class="line">            options &#123;</span><br><span class="line">                timeout(<span class="attr">time:</span> <span class="number">1</span>, <span class="attr">unit:</span> <span class="string">&quot;MINUTES&quot;</span>)</span><br><span class="line">            &#125;</span><br><span class="line">            steps &#123;</span><br><span class="line">                sh <span class="string">&#x27;printf &quot;\\e[31mSome code compilation here...\\e[0m\\n&quot;&#x27;</span></span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        stage(<span class="string">&quot;Test&quot;</span>) &#123;</span><br><span class="line">            options &#123;</span><br><span class="line">                timeout(<span class="attr">time:</span> <span class="number">2</span>, <span class="attr">unit:</span> <span class="string">&quot;MINUTES&quot;</span>)</span><br><span class="line">            &#125;</span><br><span class="line">            steps &#123;</span><br><span class="line">                sh <span class="string">&#x27;printf &quot;\\e[31mSome tests execution here...\\e[0m\\n&quot;&#x27;</span></span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>脚本式</strong></p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">node &#123;</span><br><span class="line">    timestamps &#123;</span><br><span class="line">        ansiColor(<span class="string">&quot;xterm&quot;</span>) &#123;</span><br><span class="line">            stage(<span class="string">&quot;Build&quot;</span>) &#123;</span><br><span class="line">                timeout(<span class="attr">time:</span> <span class="number">1</span>, <span class="attr">unit:</span> <span class="string">&quot;MINUTES&quot;</span>) &#123;</span><br><span class="line">                    sh <span class="string">&#x27;printf &quot;\\e[31mSome code compilation here...\\e[0m\\n&quot;&#x27;</span></span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">            stage(<span class="string">&quot;Test&quot;</span>) &#123;</span><br><span class="line">                timeout(<span class="attr">time:</span> <span class="number">2</span>, <span class="attr">unit:</span> <span class="string">&quot;MINUTES&quot;</span>) &#123;</span><br><span class="line">                    sh <span class="string">&#x27;printf &quot;\\e[31mSome tests execution here...\\e[0m\\n&quot;&#x27;</span></span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="4-条件执行-stage-的处理方式"><a href="#4-条件执行-stage-的处理方式" class="headerlink" title="4. 条件执行 stage 的处理方式"></a>4. 条件执行 stage 的处理方式</h4><p>观察下面声明式例子，添加条件当 env.FOO 等于 bar 时才执行 test stage。</p>
+<p><strong>声明式</strong></p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line">pipeline &#123;</span><br><span class="line">    agent any</span><br><span class="line"></span><br><span class="line">    options &#123;</span><br><span class="line">        timestamps()</span><br><span class="line">        ansiColor(<span class="string">&quot;xterm&quot;</span>)</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    stages &#123;</span><br><span class="line">        stage(<span class="string">&quot;Build&quot;</span>) &#123;</span><br><span class="line">            options &#123;</span><br><span class="line">                timeout(<span class="attr">time:</span> <span class="number">1</span>, <span class="attr">unit:</span> <span class="string">&quot;MINUTES&quot;</span>)</span><br><span class="line">            &#125;</span><br><span class="line">            steps &#123;</span><br><span class="line">                sh <span class="string">&#x27;printf &quot;\\e[31mSome code compilation here...\\e[0m\\n&quot;&#x27;</span></span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        stage(<span class="string">&quot;Test&quot;</span>) &#123;</span><br><span class="line">            when &#123;</span><br><span class="line">                environment <span class="attr">name:</span> <span class="string">&quot;FOO&quot;</span>, <span class="attr">value:</span> <span class="string">&quot;bar&quot;</span></span><br><span class="line">            &#125;</span><br><span class="line">            options &#123;</span><br><span class="line">                timeout(<span class="attr">time:</span> <span class="number">2</span>, <span class="attr">unit:</span> <span class="string">&quot;MINUTES&quot;</span>)</span><br><span class="line">            &#125;</span><br><span class="line">            steps &#123;</span><br><span class="line">                sh <span class="string">&#x27;printf &quot;\\e[31mSome tests execution here...\\e[0m\\n&quot;&#x27;</span></span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><img data-src="https://cdn.jsdelivr.net/gh/yekongle/PhotoManager@master/blog/images/devops/jenkins/pipeline_desc/5.png"></p>
+<p><strong>脚本式</strong></p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">node &#123;</span><br><span class="line">    timestamps &#123;</span><br><span class="line">        ansiColor(<span class="string">&quot;xterm&quot;</span>) &#123;</span><br><span class="line">            stage(<span class="string">&quot;Build&quot;</span>) &#123;</span><br><span class="line">                timeout(<span class="attr">time:</span> <span class="number">1</span>, <span class="attr">unit:</span> <span class="string">&quot;MINUTES&quot;</span>) &#123;</span><br><span class="line">                    sh <span class="string">&#x27;printf &quot;\\e[31mSome code compilation here...\\e[0m\\n&quot;&#x27;</span></span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">if</span> (env.FOO == <span class="string">&quot;bar&quot;</span>) &#123;</span><br><span class="line">                stage(<span class="string">&quot;Test&quot;</span>) &#123;</span><br><span class="line">                    timeout(<span class="attr">time:</span> <span class="number">2</span>, <span class="attr">unit:</span> <span class="string">&quot;MINUTES&quot;</span>) &#123;</span><br><span class="line">                        sh <span class="string">&#x27;printf &quot;\\e[31mSome tests execution here...\\e[0m\\n&quot;&#x27;</span></span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><img data-src="https://cdn.jsdelivr.net/gh/yekongle/PhotoManager@master/blog/images/devops/jenkins/pipeline_desc/6.png"></p>
+<p>从结果来看，声明式会正常跳过 Test stage，而脚本式需要if 判断才会添加 test stage，所以 test stage 根本没有被渲染出来，这会一定程序上造成困扰。</p>
+<h4 id="5-语法逻辑"><a href="#5-语法逻辑" class="headerlink" title="5. 语法逻辑"></a>5. 语法逻辑</h4><p>声明式支持 stages，steps 更细致的阶段性任务划分，脚本式只支持 stage, 编写逻辑时，声明式要在 script{} 标记里面写，脚本式不用，观察下面例子</p>
+<p><strong>声明式</strong></p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">pipeline &#123;  </span><br><span class="line">  agent &#123;    </span><br><span class="line">    <span class="comment">// executes on an executor with the label &#x27;some-label&#x27; or &#x27;docker&#x27;</span></span><br><span class="line">    label <span class="string">&quot;some-label || docker&quot;</span>    </span><br><span class="line">  &#125;   </span><br><span class="line"></span><br><span class="line">  stages &#123;   </span><br><span class="line">    stage(<span class="string">&quot;foo&quot;</span>) &#123;     </span><br><span class="line">      steps &#123;       </span><br><span class="line">        <span class="comment">// variable assignment (other than environment variables) can only be done in a script block</span></span><br><span class="line">        <span class="comment">// complex global variables (with properties or methods) can only be run in a script block</span></span><br><span class="line">        <span class="comment">// env variables can also be set within a script block</span></span><br><span class="line">        script &#123;          </span><br><span class="line">          foo = docker.image(<span class="string">&#x27;ubuntu&#x27;</span>)</span><br><span class="line">          env.bar = <span class="string">&quot;$&#123;foo.imageName()&#125;&quot;</span></span><br><span class="line">          echo <span class="string">&quot;foo: $&#123;foo.imageName()&#125;&quot;</span>          </span><br><span class="line">        &#125;        </span><br><span class="line">      &#125;      </span><br><span class="line">    &#125;</span><br><span class="line">    stage(<span class="string">&quot;bar&quot;</span>) &#123;</span><br><span class="line">      steps&#123;  </span><br><span class="line">        echo <span class="string">&quot;bar: $&#123;env.bar&#125;&quot;</span></span><br><span class="line">        echo <span class="string">&quot;foo: $&#123;foo.imageName()&#125;&quot;</span> </span><br><span class="line">      &#125;      </span><br><span class="line">    &#125;</span><br><span class="line">  &#125; </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>脚本式</strong></p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line"> node &#123;</span><br><span class="line"></span><br><span class="line">    git <span class="attr">url:</span> <span class="string">&#x27;https://github.com/jfrogdev/project-examples.git&#x27;</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// Get Artifactory server instance, defined in the Artifactory Plugin administration page.</span></span><br><span class="line">    <span class="keyword">def</span> server = Artifactory.server <span class="string">&quot;SERVER_ID&quot;</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// Read the upload spec and upload files to Artifactory.</span></span><br><span class="line">    <span class="keyword">def</span> downloadSpec =</span><br><span class="line">            <span class="string">&#x27;&#x27;&#x27;&#123;</span></span><br><span class="line"><span class="string">       &quot;files&quot;: [     </span></span><br><span class="line"><span class="string">         &#123;</span></span><br><span class="line"><span class="string">            &quot;pattern&quot;: &quot;libs-snapshot-local/*.zip&quot;,</span></span><br><span class="line"><span class="string">            &quot;target&quot;: &quot;dependencies/&quot;,</span></span><br><span class="line"><span class="string">            &quot;props&quot;: &quot;p1=v1;p2=v2&quot;</span></span><br><span class="line"><span class="string">         &#125;      </span></span><br><span class="line"><span class="string">       ]    </span></span><br><span class="line"><span class="string">   &#125;&#x27;&#x27;&#x27;</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> buildInfo1 = server.download <span class="attr">spec:</span> downloadSpec</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Read the upload spec which was downloaded from github.</span></span><br><span class="line">    <span class="keyword">def</span> uploadSpec =</span><br><span class="line">            <span class="string">&#x27;&#x27;&#x27;&#123;</span></span><br><span class="line"><span class="string">     &quot;files&quot;: [</span></span><br><span class="line"><span class="string">       &#123;</span></span><br><span class="line"><span class="string">          &quot;pattern&quot;: &quot;resources/Kermit.*&quot;,</span></span><br><span class="line"><span class="string">          &quot;target&quot;: &quot;libs-snapshot-local&quot;,</span></span><br><span class="line"><span class="string">          &quot;props&quot;: &quot;p1=v1;p2=v2&quot;</span></span><br><span class="line"><span class="string">       &#125;,</span></span><br><span class="line"><span class="string">       &#123;</span></span><br><span class="line"><span class="string">          &quot;pattern&quot;: &quot;resources/Frogger.*&quot;,</span></span><br><span class="line"><span class="string">          &quot;target&quot;: &quot;libs-snapshot-local&quot;</span></span><br><span class="line"><span class="string">       &#125;</span></span><br><span class="line"><span class="string">      ]</span></span><br><span class="line"><span class="string">   &#125;&#x27;&#x27;&#x27;</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="comment">// Upload to Artifactory.</span></span><br><span class="line">    <span class="keyword">def</span> buildInfo2 = server.upload <span class="attr">spec:</span> uploadSpec</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Merge the upload and download build-info objects.</span></span><br><span class="line">    buildInfo1.append buildInfo2</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Publish the build to Artifactory</span></span><br><span class="line">    server.publishBuildInfo buildInfo1</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><ul>
+<li>声明式语法是 Jenkins 官方推荐的写法，它的特点是语法简单，无需专业的编程知识也能快速上手，同时语法也更为严谨，有许多限制，失去了一定的灵活性。</li>
+<li>脚本式语法可以让你灵活的运用代码，就像一张白纸，你可以更灵活地对任务逻辑进行编排，适合有大量特定要求、逻辑复杂的任务。同样灵活的背后是没有形成统一的逻辑结构或流程，可能造成代码的不稳定，难以维护以及可读性差。</li>
+</ul>
+<h3 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h3><ul>
+<li><a target="_blank" rel="noopener" href="https://www.jenkins.io/doc/book/pipeline">Pipeline</a></li>
+<li><a target="_blank" rel="noopener" href="https://e.printstacktrace.blog/jenkins-scripted-pipeline-vs-declarative-pipeline-the-4-practical-differences/#:~:text=In%20the%20declarative%20pipeline%2C%20options%20are%20separated%20from,the%20same%20pipeline%20expressed%20using%20the%20scripted%20pipeline.">Jenkins Scripted Pipeline vs. Declarative Pipeline - the 4 practical differences</a></li>
+<li><a target="_blank" rel="noopener" href="https://dsstream.com/declarative-vs-scripted-pipeline-key-differences/">Declarative vs Scripted Pipeline – Key differences</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.bilibili.com/video/BV1kJ411p7mV?p=25">Pipeline简介</a></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+        <div class="reward-container">
+  <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="/images/wechatpay.jpg" alt="var author = 'hank' 微信支付">
+        <p>微信支付</p>
+      </div>
+
+  </div>
+</div>
+
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>var author = 'hank'
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://yekongle.github.io/2022/04/10/pipeline_desc/" title="Pipeline 声明式和脚本式的主要区别">https://yekongle.github.io/2022/04/10/pipeline_desc/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Jenkins/" rel="tag"># Jenkins</a>
+              <a href="/tags/Pipeline/" rel="tag"># Pipeline</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2020/11/30/centos7-install-k8s-cluster/" rel="prev" title="CentOs7 搭建 K8s 集群实践">
+      <i class="fa fa-chevron-left"></i> CentOs7 搭建 K8s 集群实践
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF-Pipeline"><span class="nav-number">1.</span> <span class="nav-text">什么是 Pipeline</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Pipeline-%E8%AF%AD%E6%B3%95"><span class="nav-number">2.</span> <span class="nav-text">Pipeline 语法</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%A3%B0%E6%98%8E%E5%BC%8F"><span class="nav-number">2.1.</span> <span class="nav-text">声明式</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%84%9A%E6%9C%AC%E5%BC%8F"><span class="nav-number">2.2.</span> <span class="nav-text">脚本式</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A3%B0%E6%98%8E%E5%BC%8F%E5%92%8C%E8%84%9A%E6%9C%AC%E5%BC%8F%E7%9A%84%E4%B8%BB%E8%A6%81%E5%8C%BA%E5%88%AB"><span class="nav-number">3.</span> <span class="nav-text">声明式和脚本式的主要区别</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-Pipeline-%E4%BB%A3%E7%A0%81%E6%A0%A1%E9%AA%8C"><span class="nav-number">3.1.</span> <span class="nav-text">1. Pipeline 代码校验</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-%E9%87%8D%E5%90%AF-stage"><span class="nav-number">3.2.</span> <span class="nav-text">2. 重启 stage</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-Option-%E6%8C%87%E4%BB%A4"><span class="nav-number">3.3.</span> <span class="nav-text">3. Option 指令</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4-%E6%9D%A1%E4%BB%B6%E6%89%A7%E8%A1%8C-stage-%E7%9A%84%E5%A4%84%E7%90%86%E6%96%B9%E5%BC%8F"><span class="nav-number">3.4.</span> <span class="nav-text">4. 条件执行 stage 的处理方式</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#5-%E8%AF%AD%E6%B3%95%E9%80%BB%E8%BE%91"><span class="nav-number">3.5.</span> <span class="nav-text">5. 语法逻辑</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">4.</span> <span class="nav-text">总结</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E9%93%BE%E6%8E%A5"><span class="nav-number">5.</span> <span class="nav-text">参考链接</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="var author = 'hank'"
+      src="/images/head.png">
+  <p class="site-author-name" itemprop="name">var author = 'hank'</p>
+  <div class="site-description" itemprop="description">指尖改变世界</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">28</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">5</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">27</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/yekongle" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;yekongle" rel="noopener" target="_blank"><i class="github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:973352916@qq.com" title="E-Mail → mailto:973352916@qq.com" rel="noopener" target="_blank"><i class="envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/atom.xml" title="RSS → &#x2F;atom.xml"><i class="fa fa-rss fa-fw"></i>RSS</a>
+      </span>
+  </div>
+
+
+
+<link rel="stylesheet" href="/css/APlayer.min.css">
+<link rel="stylesheet" href="/css/music.css">
+<div id="player"></div>
+<script src="/js/APlayer.min.js"></script>
+<script src="/js/music.js"></script>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">var author = 'hank'</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+<script src="/js/bookmark.js"></script>
+
+
+
+
+  
+  <script>
+    (function(){
+      var canonicalURL, curProtocol;
+      //Get the <link> tag
+      var x=document.getElementsByTagName("link");
+		//Find the last canonical URL
+		if(x.length > 0){
+			for (i=0;i<x.length;i++){
+				if(x[i].rel.toLowerCase() == 'canonical' && x[i].href){
+					canonicalURL=x[i].href;
+				}
+			}
+		}
+    //Get protocol
+	    if (!canonicalURL){
+	    	curProtocol = window.location.protocol.split(':')[0];
+	    }
+	    else{
+	    	curProtocol = canonicalURL.split(':')[0];
+	    }
+      //Get current URL if the canonical URL does not exist
+	    if (!canonicalURL) canonicalURL = window.location.href;
+	    //Assign script content. Replace current URL with the canonical URL
+      !function(){var e=/([http|https]:\/\/[a-zA-Z0-9\_\.]+\.baidu\.com)/gi,r=canonicalURL,t=document.referrer;if(!e.test(r)){var n=(String(curProtocol).toLowerCase() === 'https')?"https://sp0.baidu.com/9_Q4simg2RQJ8t7jm9iCKT-xh_/s.gif":"//api.share.baidu.com/s.gif";t?(n+="?r="+encodeURIComponent(document.referrer),r&&(n+="&l="+r)):r&&(n+="?l="+r);var i=new Image;i.src=n}}(window);})();
+  </script>
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+<script src="https://cdn.jsdelivr.net/npm/darkmode-js@1.5.7/lib/darkmode-js.min.js"></script>
+
+<script>
+var options = {
+  bottom: '64px',
+  right: 'unset',
+  left: '32px',
+  time: '0.5s',
+  mixColor: 'transparent',
+  backgroundColor: 'transparent',
+  buttonColorDark: '#100f2c',
+  buttonColorLight: '#fff',
+  saveInCookies: false,
+  label: '🌓',
+  autoMatchOsTheme: false
+}
+const darkmode = new Darkmode(options);
+window.darkmode = darkmode;
+darkmode.showWidget();
+if (window.darkmode && !window.darkmode.isActivated()) {
+  window.darkmode.toggle();
+  var toggleButtons = document.getElementsByClassName("darkmode-toggle");
+  for (i = 0; i < toggleButtons.length; i++) {
+    toggleButtons[i].classList.add("darkmode-toggle--white");
+  }
+}
+</script>
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : false,
+      appId      : 'IfTxM4VBuxzrCUyz30iyRwtE-9Nh9j0Va',
+      appKey     : 'U7UzHCn8TtTogVH8lPP3lKl7',
+      placeholder: "ヾﾉ≧∀≦)o来啊，快活啊!",
+      avatar     : 'robohash',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : '' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+     <canvas class="fireworks" style="position: fixed;left: 0;top: 0;z-index: 1; pointer-events: none;" ></canvas>
+     <script type="text/javascript" src="//cdn.bootcss.com/animejs/2.2.0/anime.min.js"></script>
+     <script type="text/javascript" src="/js/fireworks.js"></script>
+</body>
+</html>
