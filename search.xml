@@ -2383,4 +2383,40 @@
         <tag>Pipeline</tag>
       </tags>
   </entry>
+  <entry>
+    <title>Jenkins 使用 Pipeline 构建部署 Spring Boot 应用</title>
+    <url>/2022/04/19/jenkins-pipleline-cicd-test/</url>
+    <content><![CDATA[<h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>在本文开始前可以先看看这篇文章：<br><a href="https://blog.csdn.net/qq_23483671/article/details/109959576">Jenkins + Gitlab + Maven + Tomcat 持续集成部署 SpringBoot 应用实践</a>，除了 Jenkins 构建项目的方式不一样之外，其他配置都一样。</p>
+<p>关于 pipeline 的简介和 pipeline 的两种语法模型的区别可以看这篇文章: <a href="https://blog.csdn.net/qq_23483671/article/details/124081218">Pipeline 声明式和脚本式的主要区别</a></p>
+<span id="more"></span>
+<h3 id="Spring-Boot-项目准备"><a href="#Spring-Boot-项目准备" class="headerlink" title="Spring Boot 项目准备"></a>Spring Boot 项目准备</h3><p>这里创建了一个简单的 Spring Boot 项目，功能简单，运行后会提供一个可访问的 index 页面。结构图如下：</p>
+<p><img data-src="https://cdn.jsdelivr.net/gh/yekongle/PhotoManager@master/blog/images/devops/practise/jenkins_cicd_test/1.png"></p>
+<p>项目根路径有个 Jenkinsfile，关于该项目的构建与部署步骤等任务都被记录在该文件中，随着项目一起进行版本化迭代。</p>
+<p>Jenkinsfile 里填写 pipeline 如下，这里采用的是声明式语法，这里分为 3 个 stage 分别对应代码 checkout，编译构建以及项目部署三个阶段，最后会有 email 推送每次构建的结果。</p>
+<figure class="highlight groovy"><table><tr><td class="code"><pre><span class="line">pipeline &#123;</span><br><span class="line">    agent any</span><br><span class="line">    stages &#123;</span><br><span class="line">        stage(<span class="string">&#x27;拉取代码&#x27;</span>) &#123;</span><br><span class="line">            steps &#123;</span><br><span class="line">                checkout([<span class="attr">$class:</span> <span class="string">&#x27;GitSCM&#x27;</span>, <span class="attr">branches:</span> [[<span class="attr">name:</span> <span class="string">&#x27;*/$&#123;branch&#125;&#x27;</span>]],</span><br><span class="line">                <span class="symbol">doGenerateSubmoduleConfigurations:</span> <span class="literal">false</span>, <span class="attr">extensions:</span> [], <span class="attr">submoduleCfg:</span> [],</span><br><span class="line">                <span class="symbol">userRemoteConfigs:</span> [[<span class="attr">credentialsId:</span> <span class="string">&#x27;Jenkins_SSH_Key&#x27;</span>, <span class="attr">url:</span></span><br><span class="line">                <span class="string">&#x27;git@192.168.43.208:yekongle-test/ci-test.git&#x27;</span>]]])</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        stage(<span class="string">&#x27;编译构建&#x27;</span>) &#123;</span><br><span class="line">            steps &#123;</span><br><span class="line">                sh <span class="attr">label:</span> <span class="string">&#x27;&#x27;</span>, <span class="attr">script:</span> <span class="string">&#x27;mvn clean package&#x27;</span></span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        stage(<span class="string">&#x27;项目部署&#x27;</span>) &#123;</span><br><span class="line">            steps &#123;</span><br><span class="line">                deploy <span class="attr">adapters:</span> [tomcat8(<span class="attr">credentialsId:</span> <span class="string">&#x27;Tomcat-Auth&#x27;</span>, <span class="attr">path:</span> <span class="string">&#x27;&#x27;</span>, <span class="attr">url:</span> <span class="string">&#x27;http://192.168.43.206:8080&#x27;</span>)], <span class="attr">contextPath:</span> <span class="literal">null</span>,</span><br><span class="line">                <span class="symbol">war:</span> <span class="string">&#x27;target/*.war&#x27;</span></span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    post &#123;</span><br><span class="line">        always &#123;</span><br><span class="line">            emailext(</span><br><span class="line">                <span class="symbol">subject:</span> <span class="string">&#x27;构建通知：$&#123;PROJECT_NAME&#125; - Build # $&#123;BUILD_NUMBER&#125; -$&#123;BUILD_STATUS&#125;!&#x27;</span>,</span><br><span class="line">                <span class="symbol">body:</span> <span class="string">&#x27;$&#123;FILE,path=&quot;email.html&quot;&#125;&#x27;</span>,</span><br><span class="line">                <span class="symbol">to:</span> <span class="string">&#x27;yekongle@126.com&#x27;</span></span><br><span class="line">            )</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>同样将该项目推送到本地gitlab 上并配置好 webhook。</p>
+<p><img data-src="https://cdn.jsdelivr.net/gh/yekongle/PhotoManager@master/blog/images/devops/practise/jenkins_cicd_test/2.png"></p>
+<h3 id="Jenkins-配置-pipeline"><a href="#Jenkins-配置-pipeline" class="headerlink" title="Jenkins 配置 pipeline"></a>Jenkins 配置 pipeline</h3><p>首先去插件中心安装 pipeline 插件</p>
+<p><img data-src="https://cdn.jsdelivr.net/gh/yekongle/PhotoManager@master/blog/images/devops/practise/jenkins_cicd_test/3.png"></p>
+<p>安装完插件后创建一个新 item 时可以看到可以选择一个 pipeline 类型的项目。</p>
+<p><img data-src="https://cdn.jsdelivr.net/gh/yekongle/PhotoManager@master/blog/images/devops/practise/jenkins_cicd_test/4.png"></p>
+<p>然后关于 pipeline 的配置可以参考下图，其中 pipeline 的 执行代码会引用到 Spring Boot 项目根路径的 Jenkinsfile。</p>
+<p><img data-src="https://cdn.jsdelivr.net/gh/yekongle/PhotoManager@master/blog/images/devops/practise/jenkins_cicd_test/5.png"></p>
+<h3 id="构建并部署"><a href="#构建并部署" class="headerlink" title="构建并部署"></a>构建并部署</h3><p>保存 pipeline 配置后，可以通过提交代码到 master 分支触发构建任务，也可以直接在 Jenkins 手动启动一次 build up.</p>
+<p><img data-src="https://cdn.jsdelivr.net/gh/yekongle/PhotoManager@master/blog/images/devops/practise/jenkins_cicd_test/6.png"></p>
+<p>观察上图，pipeline 任务可以以可视化视图的形式展示出来，可以直观地看到每一个 stage 的执行时间和执行结果。</p>
+<p><img data-src="https://cdn.jsdelivr.net/gh/yekongle/PhotoManager@master/blog/images/devops/practise/jenkins_cicd_test/7.png"></p>
+<p>执行成功后会将项目 deploy 到 tomcat 容器，点击访问。<br><img data-src="https://cdn.jsdelivr.net/gh/yekongle/PhotoManager@master/blog/images/devops/practise/jenkins_cicd_test/8.png"></p>
+]]></content>
+      <categories>
+        <category>DevOps</category>
+      </categories>
+      <tags>
+        <tag>Jenkins</tag>
+        <tag>CI</tag>
+        <tag>CD</tag>
+        <tag>Pipeline</tag>
+      </tags>
+  </entry>
 </search>
